@@ -5,4 +5,5 @@ declare global {
   const GRAPHCMS_ENDPOINT: string;
   const EMAIL_USER: string;
   const EMAIL_PASSWORD: string;
+  const SHOPIFY_ENDPOINT: string;
 }

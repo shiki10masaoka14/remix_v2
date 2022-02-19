@@ -1,3 +1,4 @@
+import { DocumentNode } from "graphql";
 import { GraphQLClient } from "graphql-request";
 
 const endpoint =
@@ -10,3 +11,7 @@ export const shopifyClient = new GraphQLClient(endpoint, {
     ),
   },
 });
+
+export const getGqlString = (doc: DocumentNode) => {
+  return doc.loc && doc.loc.source.body;
+};

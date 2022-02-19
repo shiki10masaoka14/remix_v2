@@ -1,42 +1,44 @@
 import { VFC } from "react";
 import { LoaderFunction, useLoaderData } from "remix";
-import { GetInfosQuery } from "~/utils/graphCMS/graphCMSGenerated";
+import { GetShopInfoQuery } from "~/utils/shopify/shopifyGenerated";
 
 export const loader: LoaderFunction = async () => {
-  const { data } = await fetch(GRAPHCMS_ENDPOINT, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${GRAPHCMS_API_KEY}`,
-    },
-    body: JSON.stringify({
-      query: `{
-        infos {
-          title
-          value
-        }
-      }`,
-    }),
-  }).then((res) => res.json());
+  const productQuery = () => `
+    query {
+      shop {
+        description
+      }
+    }
+  `;
 
-  const infos = data.infos;
+  const GRAPHQL_BODY = () => {
+    return {
+      async: true,
+      crossDomain: true,
+      method: "POST",
+      headers: {
+        "X-Shopify-Storefront-Access-Token":
+          SHOPIFY_STOREFRONT_API_KEY,
+        "Content-Type": "application/graphql",
+      },
+      body: productQuery(),
+    };
+  };
 
-  return { EMAIL_USER, infos };
+  const { data } = await fetch(
+    SHOPIFY_ENDPOINT,
+    GRAPHQL_BODY(),
+  ).then((res) => res.json());
+
+  const { shop } = data;
+
+  return { shop };
 };
 
 const Index: VFC = () => {
-  const { EMAIL_USER } = useLoaderData();
-  const { infos } = useLoaderData<GetInfosQuery>();
-  console.log(infos);
+  const { shop } = useLoaderData<GetShopInfoQuery>();
+  console.log(shop);
 
-  return (
-    <>
-      <h1>{EMAIL_USER}</h1>
-      {infos?.map((info) => (
-        <p key={info.title}>
-          {info.title}: {info.value[0]}
-        </p>
-      ))}
-    </>
-  );
+  return <>{shop.description}</>;
 };
 export default Index;
