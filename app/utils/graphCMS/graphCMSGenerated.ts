@@ -3362,3 +3362,8 @@ export type GetInfosQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetInfosQuery = { __typename?: 'Query', infos: Array<{ __typename?: 'Info', title?: string | null, value: Array<string> }> };
+
+export type GetLogoQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLogoQuery = { __typename?: 'Query', asset?: { __typename?: 'Asset', id: string, url: string } | null };

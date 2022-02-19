@@ -4,3 +4,10 @@ query GetInfos {
     value
   }
 }
+
+query GetLogo {
+  asset(where: { id: "ckztukhg825wa0b81prkv1aow" }) {
+    id
+    url
+  }
+}
