@@ -14,7 +14,8 @@ import {
 } from "@chakra-ui/react";
 import { memo, VFC } from "react";
 import { RiMenuFoldLine } from "react-icons/ri";
-import { Link as RemixLink } from "remix";
+import { Link as RemixLink, useLoaderData } from "remix";
+import { GetLogoQuery } from "~/utils/graphCMS/graphCMSGenerated";
 
 // ここまで
 //
@@ -22,16 +23,9 @@ import { Link as RemixLink } from "remix";
 //
 // ここから
 
-type PROPS = {
-  asset?: {
-    __typename?: "Asset";
-    id: string;
-    url: string;
-  } | null;
-};
-
-export const Header: VFC<PROPS> = memo(({ asset }) => {
+export const Header: VFC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { asset } = useLoaderData<GetLogoQuery>();
 
   return (
     <>
