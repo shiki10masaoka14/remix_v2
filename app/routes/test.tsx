@@ -1,22 +1,19 @@
 import { VFC } from "react";
 import { LoaderFunction, useLoaderData } from "remix";
-import { testResolver } from "~/utils/shopify/resolver/testResolver";
+import { listResolver } from "~/utils/shopify/resolver/listResolver";
 
 export const loader: LoaderFunction = async () => {
-  const { product } = await testResolver(
-    "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzY3Mjg3NTAzOTk2MjA=",
+  const { data } = await listResolver(
+    3,
+    "eyJsYXN0X2lkIjo2NzI4NzQ2NzYyMzcyLCJsYXN0X3ZhbHVlIjoiNjcyODc0Njc2MjM3MiJ9",
   );
-  return { product };
+  return { data };
 };
 
 const Test: VFC = () => {
-  const { product } = useLoaderData();
-  console.log(product);
+  const { data } = useLoaderData();
+  console.log(data);
 
-  return (
-    <>
-      <p>task</p>
-    </>
-  );
+  return <>test</>;
 };
 export default Test;

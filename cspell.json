@@ -12,6 +12,7 @@
     "autogen",
     "autoincrement",
     "chakra",
+    "ckztukhg825wa0b81prkv1aow",
     "codegen",
     "datasource",
     "dbaeumer",
@@ -43,14 +44,16 @@
     "typegen",
     "unstyled",
     "upsert",
+    "urql",
     "vercel",
     "visualstudioexptteam",
     "vite",
     "vitejs",
-    "vscodeintellicode",
-    "ckztukhg825wa0b81prkv1aow"
+    "vscodeintellicode"
   ],
   "ignoreWords": [],
   "import": [],
-  "enableFiletypes": ["prisma"]
+  "enableFiletypes": [
+    "prisma"
+  ]
 }

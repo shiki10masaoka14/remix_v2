@@ -39,9 +39,6 @@ const Index: VFC = () => {
         <Link as={RemixLink} to={`/products/1`}>
           View More
         </Link>
-        <Link as={RemixLink} to={`/test`}>
-          test
-        </Link>
       </Center>
     </Layout>
   );
