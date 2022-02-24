@@ -11,7 +11,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { VFC } from "react";
-import { ActionFunction, Form, redirect } from "remix";
+import {
+  ActionFunction,
+  Form,
+  LoaderFunction,
+  redirect,
+} from "remix";
+import { Layout } from "~/components/Layout";
+import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
 
 export const action: ActionFunction = async ({
   request,
@@ -49,28 +56,37 @@ export const action: ActionFunction = async ({
       console.log(error.statusText);
     },
   );
+
   return redirect("/contact/completionScreen");
+};
+
+export const loader: LoaderFunction = async () => {
+  const { asset } = await logoResolver();
+
+  return { asset };
 };
 
 const Contact: VFC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Container mt={10}>
-        <Form method="post">
-          <VStack spacing={8}>
-            <Input placeholder="name" name="name" />
-            <Input placeholder="email" name="email" />
-            <Textarea
-              placeholder="Details of your inquiry"
-              name="message"
-            />
-            <Button onClick={onOpen} type="submit">
-              send
-            </Button>
-          </VStack>
-        </Form>
-      </Container>
+      <Layout>
+        <Container mt={10}>
+          <Form method="post">
+            <VStack spacing={8}>
+              <Input placeholder="name" name="name" />
+              <Input placeholder="email" name="email" />
+              <Textarea
+                placeholder="Details of your inquiry"
+                name="message"
+              />
+              <Button onClick={onOpen} type="submit">
+                send
+              </Button>
+            </VStack>
+          </Form>
+        </Container>
+      </Layout>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay>
           <Center minH={"100vh"}>

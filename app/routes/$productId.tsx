@@ -1,9 +1,11 @@
 import { Layout } from "../components/Layout";
 import {
+  Button,
   Center,
   Heading,
   HStack,
   Image,
+  Input,
   Stack,
   Table,
   Tbody,
@@ -12,17 +14,49 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { VFC } from "react";
-import { useNavigate } from "remix";
+import {
+  ActionFunction,
+  Form,
+  useActionData,
+  useNavigate,
+} from "remix";
 import { LoaderFunction, useLoaderData } from "remix";
 import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
+import { cartCreateResolver } from "~/utils/shopify/resolver/cartCreateResolver";
 import { productResolver } from "~/utils/shopify/resolver/productResolver";
-import { FindProductQuery } from "~/utils/shopify/shopifyGenerated";
+import {
+  CartCreateMutation,
+  FindProductQuery,
+} from "~/utils/shopify/shopifyGenerated";
 
 // ここまで
 //
 //
 //
 // ここから
+
+export const action: ActionFunction = async ({
+  request,
+  params,
+}) => {
+  const formData = await request.formData();
+  const value = Object.fromEntries(formData);
+  const { quantity, merchandiseId } = value;
+
+  const { data: actionData } = await cartCreateResolver(
+    {
+      lines: [
+        {
+          quantity: Number(quantity),
+          merchandiseId: String(merchandiseId),
+        },
+      ],
+    },
+    10,
+  );
+
+  return { actionData };
+};
 
 export const loader: LoaderFunction = async ({
   params,
@@ -44,8 +78,14 @@ export const loader: LoaderFunction = async ({
 // ここから
 
 const Product: VFC = () => {
-  const { product } = useLoaderData<FindProductQuery>();
   const navigate = useNavigate();
+  const { product } = useLoaderData<FindProductQuery>();
+  // console.log(product);
+
+  const actionData = useActionData();
+  const cartData =
+    actionData?.actionData as CartCreateMutation;
+  console.log(cartData?.cartCreate?.cart?.id);
 
   return (
     <Layout>
@@ -87,6 +127,16 @@ const Product: VFC = () => {
               )}
             </Tbody>
           </Table>
+          <Form method="post">
+            <Input placeholder="個数入力" name="quantity" />
+            <Button
+              name="merchandiseId"
+              type="submit"
+              value={product?.variants.edges[0].node.id}
+            >
+              カートに入れる
+            </Button>
+          </Form>
         </Stack>
       </HStack>
       <Center mb={16}>

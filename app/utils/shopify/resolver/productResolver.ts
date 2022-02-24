@@ -16,6 +16,7 @@ export const productResolver = async (id: any) => {
         variants(first: 3) {
           edges {
             node {
+              id
               selectedOptions {
                 name
                 value

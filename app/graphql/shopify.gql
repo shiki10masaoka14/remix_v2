@@ -37,6 +37,7 @@ query FindProduct($id: ID, $first: Int) {
     variants(first: $first) {
       edges {
         node {
+          id
           selectedOptions {
             name
             value
@@ -58,5 +59,53 @@ query FindCursor($first: Int) {
 query GetShopInfo {
   shop {
     description
+  }
+}
+
+# query FindCart(
+#   $id_cart: ID!
+#   $first: Int
+#   $id_product: ID!
+# ) {
+#   cart(id: $id_cart) {
+#     id
+#     lines(first: $first) {
+#       edges {
+#         node {
+#           quantity
+#           estimatedCost {
+#             totalAmount {
+#               amount
+#               currencyCode
+#             }
+#           }
+#         }
+#       }
+#     }
+#   }
+#   product(id: $id_product) {
+#     id
+#     title
+#   }
+# }
+
+mutation CartCreate($input: CartInput, $first: Int) {
+  cartCreate(input: $input) {
+    cart {
+      id
+      lines(first: $first) {
+        edges {
+          node {
+            quantity
+            estimatedCost {
+              totalAmount {
+                amount
+                currencyCode
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

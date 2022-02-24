@@ -6332,7 +6332,7 @@ export type FindProductQueryVariables = Exact<{
 }>;
 
 
-export type FindProductQuery = { __typename?: 'QueryRoot', product?: { __typename?: 'Product', id: string, title: string, description: string, featuredImage?: { __typename?: 'Image', url: any } | null, priceRange: { __typename?: 'ProductPriceRange', maxVariantPrice: { __typename?: 'MoneyV2', amount: any } }, variants: { __typename?: 'ProductVariantConnection', edges: Array<{ __typename?: 'ProductVariantEdge', node: { __typename?: 'ProductVariant', selectedOptions: Array<{ __typename?: 'SelectedOption', name: string, value: string }> } }> } } | null };
+export type FindProductQuery = { __typename?: 'QueryRoot', product?: { __typename?: 'Product', id: string, title: string, description: string, featuredImage?: { __typename?: 'Image', url: any } | null, priceRange: { __typename?: 'ProductPriceRange', maxVariantPrice: { __typename?: 'MoneyV2', amount: any } }, variants: { __typename?: 'ProductVariantConnection', edges: Array<{ __typename?: 'ProductVariantEdge', node: { __typename?: 'ProductVariant', id: string, selectedOptions: Array<{ __typename?: 'SelectedOption', name: string, value: string }> } }> } } | null };
 
 export type FindCursorQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -6345,3 +6345,11 @@ export type GetShopInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetShopInfoQuery = { __typename?: 'QueryRoot', shop: { __typename?: 'Shop', description?: string | null } };
+
+export type CartCreateMutationVariables = Exact<{
+  input?: InputMaybe<CartInput>;
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type CartCreateMutation = { __typename?: 'Mutation', cartCreate?: { __typename?: 'CartCreatePayload', cart?: { __typename?: 'Cart', id: string, lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', quantity: number, estimatedCost: { __typename?: 'CartLineEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any, currencyCode: CurrencyCode } } } }> } } | null } | null };
