@@ -17,7 +17,6 @@ import { VFC } from "react";
 import {
   ActionFunction,
   Form,
-  useActionData,
   useNavigate,
 } from "remix";
 import { LoaderFunction, useLoaderData } from "remix";
@@ -25,7 +24,6 @@ import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
 import { cartCreateResolver } from "~/utils/shopify/resolver/cartCreateResolver";
 import { productResolver } from "~/utils/shopify/resolver/productResolver";
 import {
-  CartCreateMutation,
   FindProductQuery,
 } from "~/utils/shopify/shopifyGenerated";
 
@@ -43,7 +41,7 @@ export const action: ActionFunction = async ({
   const value = Object.fromEntries(formData);
   const { quantity, merchandiseId } = value;
 
-  const { data: actionData } = await cartCreateResolver(
+  const { data } = await cartCreateResolver(
     {
       lines: [
         {
@@ -55,7 +53,7 @@ export const action: ActionFunction = async ({
     10,
   );
 
-  return { actionData };
+  return { data };
 };
 
 export const loader: LoaderFunction = async ({
@@ -80,12 +78,6 @@ export const loader: LoaderFunction = async ({
 const Product: VFC = () => {
   const navigate = useNavigate();
   const { product } = useLoaderData<FindProductQuery>();
-  // console.log(product);
-
-  const actionData = useActionData();
-  const cartData =
-    actionData?.actionData as CartCreateMutation;
-  console.log(cartData?.cartCreate?.cart?.id);
 
   return (
     <Layout>

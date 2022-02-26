@@ -5,11 +5,12 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { VFC } from "react";
+import { useState, VFC } from "react";
 import {
   LoaderFunction,
   useLoaderData,
   Link as RemixLink,
+  useLocation,
 } from "remix";
 import { Layout } from "~/components/Layout";
 import { ProductCard } from "~/components/productCard";
@@ -58,8 +59,14 @@ export const loader: LoaderFunction = async ({
 const Products: VFC = () => {
   const { pageId } = useLoaderData();
   const { products } = useLoaderData<GetProductsQuery>();
+
+  const location = useLocation();
+  const [cartId, setCartId] = useState<string>(
+    location.state as string,
+  );
   return (
     <Layout>
+      <Heading>{cartId}</Heading>
       <Heading
         fontWeight={"normal"}
         fontSize={"16px"}

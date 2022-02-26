@@ -6346,10 +6346,16 @@ export type GetShopInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetShopInfoQuery = { __typename?: 'QueryRoot', shop: { __typename?: 'Shop', description?: string | null } };
 
-export type CartCreateMutationVariables = Exact<{
-  input?: InputMaybe<CartInput>;
+export type CartCreateMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CartCreateMutation = { __typename?: 'Mutation', cartCreate?: { __typename?: 'CartCreatePayload', cart?: { __typename?: 'Cart', id: string } | null } | null };
+
+export type CartLinesAddMutationVariables = Exact<{
+  lines: Array<CartLineInput> | CartLineInput;
+  cartId: Scalars['ID'];
   first?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type CartCreateMutation = { __typename?: 'Mutation', cartCreate?: { __typename?: 'CartCreatePayload', cart?: { __typename?: 'Cart', id: string, lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', quantity: number, estimatedCost: { __typename?: 'CartLineEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any, currencyCode: CurrencyCode } } } }> } } | null } | null };
+export type CartLinesAddMutation = { __typename?: 'Mutation', cartLinesAdd?: { __typename?: 'CartLinesAddPayload', cart?: { __typename?: 'Cart', id: string, estimatedCost: { __typename?: 'CartEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', quantity: number } }> } } | null } | null };

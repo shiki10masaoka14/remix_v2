@@ -6,6 +6,7 @@ import {
   DrawerContent,
   DrawerOverlay,
   Flex,
+  Heading,
   Icon,
   Image,
   Link,
@@ -14,8 +15,13 @@ import {
 } from "@chakra-ui/react";
 import { memo, VFC } from "react";
 import { RiMenuFoldLine } from "react-icons/ri";
-import { Link as RemixLink, useLoaderData } from "remix";
+import {
+  Link as RemixLink,
+  useActionData,
+  useLoaderData,
+} from "remix";
 import { GetLogoQuery } from "~/utils/graphCMS/graphCMSGenerated";
+import { CartCreateMutation } from "~/utils/shopify/shopifyGenerated";
 
 // ここまで
 //
@@ -26,6 +32,9 @@ import { GetLogoQuery } from "~/utils/graphCMS/graphCMSGenerated";
 export const Header: VFC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { asset } = useLoaderData<GetLogoQuery>();
+  
+  const actionData = useActionData();
+  const cartData = actionData?.data as CartCreateMutation;
 
   return (
     <>
@@ -44,6 +53,7 @@ export const Header: VFC = memo(() => {
             onClick={onOpen}
           />
         </Flex>
+        <Heading>{cartData?.cartCreate?.cart?.id}</Heading>
       </Container>
       <Drawer
         isOpen={isOpen}
