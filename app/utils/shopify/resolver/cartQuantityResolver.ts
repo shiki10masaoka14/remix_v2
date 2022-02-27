@@ -1,8 +1,6 @@
-import { CartLineInput } from "../shopifyGenerated";
-
-export const CartLinesAddResolver = async (
-  lines: [CartLineInput],
-  cartId: string,
+export const cartQuantityResolver = async (
+  id: string,
+  first: number,
 ) => {
   const { data } = await fetch(SHOPIFY_ENDPOINT, {
     method: "POST",
@@ -13,17 +11,21 @@ export const CartLinesAddResolver = async (
     },
     body: JSON.stringify({
       query: `
-      mutation CartLinesAdd($lines: [CartLineInput!]!, $cartId: ID!) {
-        cartLinesAdd(lines: $lines, cartId: $cartId) {
-          cart {
-            id
+      query CartQuantity($id: ID!, $first: Int) {
+        cart(id: $id) {
+          lines(first: $first) {
+            edges {
+              node {
+                quantity
+              }
+            }
           }
         }
       }
       `,
       variables: {
-        lines,
-        cartId,
+        id,
+        first,
       },
     }),
   }).then((res) => res.json());

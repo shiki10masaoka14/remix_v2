@@ -15,13 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { memo, VFC } from "react";
 import { RiMenuFoldLine } from "react-icons/ri";
-import {
-  Link as RemixLink,
-  useActionData,
-  useLoaderData,
-} from "remix";
+import { Link as RemixLink, useLoaderData } from "remix";
 import { GetLogoQuery } from "~/utils/graphCMS/graphCMSGenerated";
-import { CartCreateMutation } from "~/utils/shopify/shopifyGenerated";
+import { CartQuantityQuery } from "~/utils/shopify/shopifyGenerated";
 
 // ここまで
 //
@@ -32,9 +28,10 @@ import { CartCreateMutation } from "~/utils/shopify/shopifyGenerated";
 export const Header: VFC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { asset } = useLoaderData<GetLogoQuery>();
-  
-  const actionData = useActionData();
-  const cartData = actionData?.data as CartCreateMutation;
+
+  const { cartQuantityData } = useLoaderData();
+  const cartQuantity =
+    cartQuantityData as CartQuantityQuery;
 
   return (
     <>
@@ -47,13 +44,22 @@ export const Header: VFC = memo(() => {
           <Link as={RemixLink} to={"/"}>
             <Image src={asset?.url} w={"180px"} />
           </Link>
+          {!cartQuantity ? (
+            <Heading>0</Heading>
+          ) : (
+            <Heading>
+              {cartQuantity.cart?.lines.edges.reduce(
+                (p, x) => p + x.node.quantity,
+                0,
+              )}
+            </Heading>
+          )}
           <Icon
             as={RiMenuFoldLine}
             fontSize={30}
             onClick={onOpen}
           />
         </Flex>
-        <Heading>{cartData?.cartCreate?.cart?.id}</Heading>
       </Container>
       <Drawer
         isOpen={isOpen}

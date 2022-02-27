@@ -5,15 +5,15 @@ import {
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
-import { useState, VFC } from "react";
+import { VFC } from "react";
 import {
   LoaderFunction,
   useLoaderData,
   Link as RemixLink,
-  useLocation,
 } from "remix";
 import { Layout } from "~/components/Layout";
 import { ProductCard } from "~/components/productCard";
+import { userPrefs } from "~/utils/cookies";
 import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
 import { cursorResolver } from "~/utils/shopify/resolver/cursorResolver";
 import { listResolver } from "~/utils/shopify/resolver/listResolver";
@@ -30,6 +30,7 @@ import {
 
 export const loader: LoaderFunction = async ({
   params,
+  request,
 }) => {
   const pageItems = 12;
   const pageId = Number(params.pageId);
@@ -47,7 +48,11 @@ export const loader: LoaderFunction = async ({
 
   const { asset } = await logoResolver();
 
-  return { products, pageId, asset };
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie =
+    (await userPrefs.parse(cookieHeader)) || {};
+
+  return { products, pageId, asset, cartId: cookie.cartId };
 };
 
 // ここまで
@@ -59,11 +64,8 @@ export const loader: LoaderFunction = async ({
 const Products: VFC = () => {
   const { pageId } = useLoaderData();
   const { products } = useLoaderData<GetProductsQuery>();
+  const { cartId } = useLoaderData();
 
-  const location = useLocation();
-  const [cartId, setCartId] = useState<string>(
-    location.state as string,
-  );
   return (
     <Layout>
       <Heading>{cartId}</Heading>

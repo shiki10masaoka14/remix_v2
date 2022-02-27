@@ -62,61 +62,35 @@ query GetShopInfo {
   }
 }
 
-# query FindCart(
-#   $id_cart: ID!
-#   $first: Int
-#   $id_product: ID!
-# ) {
-#   cart(id: $id_cart) {
-#     id
-#     lines(first: $first) {
-#       edges {
-#         node {
-#           quantity
-#           estimatedCost {
-#             totalAmount {
-#               amount
-#               currencyCode
-#             }
-#           }
-#         }
-#       }
-#     }
-#   }
-#   product(id: $id_product) {
-#     id
-#     title
-#   }
-# }
+query CartQuantity($id: ID!, $first: Int) {
+  cart(id: $id) {
+    lines(first: $first) {
+      edges {
+        node {
+          quantity
+        }
+      }
+    }
+  }
+}
 
-mutation CartCreate {
-  cartCreate {
+# ここまでquery
+#
+#
+# ここからmutation
+
+mutation CartCreate($input: CartInput) {
+  cartCreate(input: $input) {
     cart {
       id
     }
   }
 }
 
-mutation CartLinesAdd(
-  $lines: [CartLineInput!]!
-  $cartId: ID!
-  $first: Int
-) {
+mutation CartLinesAdd($lines: [CartLineInput!]!, $cartId: ID!) {
   cartLinesAdd(lines: $lines, cartId: $cartId) {
     cart {
       id
-      estimatedCost {
-        totalAmount {
-          amount
-        }
-      }
-      lines(first: $first) {
-        edges {
-          node {
-            quantity
-          }
-        }
-      }
     }
   }
 }

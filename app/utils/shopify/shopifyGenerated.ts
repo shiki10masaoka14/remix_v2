@@ -103,7 +103,7 @@ export type AppliedGiftCard = Node & {
 };
 
 /** An article in an online store blog. */
-export type Article = Node & HasMetafields & OnlineStorePublishable & {
+export type Article = HasMetafields & Node & OnlineStorePublishable & {
   __typename?: 'Article';
   /**
    * The article's author.
@@ -305,7 +305,7 @@ export type AvailableShippingRates = {
 };
 
 /** An online store blog. */
-export type Blog = Node & HasMetafields & OnlineStorePublishable & {
+export type Blog = HasMetafields & Node & OnlineStorePublishable & {
   __typename?: 'Blog';
   /** Find an article by its handle. */
   articleByHandle?: Maybe<Article>;
@@ -1509,7 +1509,7 @@ export type CheckoutUserError = DisplayableError & {
 };
 
 /** A collection represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse. */
-export type Collection = Node & HasMetafields & OnlineStorePublishable & {
+export type Collection = HasMetafields & Node & OnlineStorePublishable & {
   __typename?: 'Collection';
   /** Stripped description of the collection, single line with HTML tags removed. */
   description: Scalars['String'];
@@ -3136,7 +3136,7 @@ export type Domain = {
 };
 
 /** Represents a video hosted outside of Shopify. */
-export type ExternalVideo = Node & Media & {
+export type ExternalVideo = Media & Node & {
   __typename?: 'ExternalVideo';
   /** A word or phrase to share the nature or contents of a media. */
   alt?: Maybe<Scalars['String']>;
@@ -3750,7 +3750,7 @@ export enum MediaHost {
 }
 
 /** Represents a Shopify hosted image. */
-export type MediaImage = Node & Media & {
+export type MediaImage = Media & Node & {
   __typename?: 'MediaImage';
   /** A word or phrase to share the nature or contents of a media. */
   alt?: Maybe<Scalars['String']>;
@@ -3852,7 +3852,7 @@ export type MetafieldParentResource = Article | Blog | Collection | Customer | O
 export type MetafieldReference = MediaImage | Page | Product | ProductVariant;
 
 /** Represents a Shopify hosted 3D model. */
-export type Model3d = Node & Media & {
+export type Model3d = Media & Node & {
   __typename?: 'Model3d';
   /** A word or phrase to share the nature or contents of a media. */
   alt?: Maybe<Scalars['String']>;
@@ -4435,7 +4435,7 @@ export type OnlineStorePublishable = {
 };
 
 /** An order is a customer’s completed request to purchase one or more products from a shop. An order is created when a customer completes the checkout process, during which time they provides an email address, billing address and payment information. */
-export type Order = Node & HasMetafields & {
+export type Order = HasMetafields & Node & {
   __typename?: 'Order';
   /** The reason for the order's cancellation. Returns `null` if the order wasn't canceled. */
   cancelReason?: Maybe<OrderCancelReason>;
@@ -4731,7 +4731,7 @@ export enum OrderSortKeys {
 }
 
 /** Shopify merchants can create pages to hold static HTML content. Each Page object represents a custom page on the online store. */
-export type Page = Node & HasMetafields & OnlineStorePublishable & {
+export type Page = HasMetafields & Node & OnlineStorePublishable & {
   __typename?: 'Page';
   /** The description of the page, complete with HTML formatting. */
   body: Scalars['HTML'];
@@ -4925,7 +4925,7 @@ export type PricingValue = MoneyV2 | PricingPercentageValue;
  * A product represents an individual item for sale in a Shopify store. Products are often physical, but they don't have to be.
  * For example, a digital download (such as a movie, music or ebook file) also qualifies as a product, as do services (such as equipment rental, work for hire, customization of another product or an extended warranty).
  */
-export type Product = Node & HasMetafields & OnlineStorePublishable & {
+export type Product = HasMetafields & Node & OnlineStorePublishable & {
   __typename?: 'Product';
   /** Indicates if at least one product variant is available for sale. */
   availableForSale: Scalars['Boolean'];
@@ -5286,7 +5286,7 @@ export enum ProductSortKeys {
 }
 
 /** A product variant represents a different version of a product, such as differing sizes or differing colors. */
-export type ProductVariant = Node & HasMetafields & {
+export type ProductVariant = HasMetafields & Node & {
   __typename?: 'ProductVariant';
   /** Indicates if the product variant is available for sale. */
   availableForSale: Scalars['Boolean'];
@@ -6277,7 +6277,7 @@ export type VariantOptionFilter = {
 };
 
 /** Represents a Shopify hosted video. */
-export type Video = Node & Media & {
+export type Video = Media & Node & {
   __typename?: 'Video';
   /** A word or phrase to share the nature or contents of a media. */
   alt?: Maybe<Scalars['String']>;
@@ -6346,7 +6346,17 @@ export type GetShopInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetShopInfoQuery = { __typename?: 'QueryRoot', shop: { __typename?: 'Shop', description?: string | null } };
 
-export type CartCreateMutationVariables = Exact<{ [key: string]: never; }>;
+export type CartQuantityQueryVariables = Exact<{
+  id: Scalars['ID'];
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type CartQuantityQuery = { __typename?: 'QueryRoot', cart?: { __typename?: 'Cart', lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', quantity: number } }> } } | null };
+
+export type CartCreateMutationVariables = Exact<{
+  input?: InputMaybe<CartInput>;
+}>;
 
 
 export type CartCreateMutation = { __typename?: 'Mutation', cartCreate?: { __typename?: 'CartCreatePayload', cart?: { __typename?: 'Cart', id: string } | null } | null };
@@ -6354,8 +6364,7 @@ export type CartCreateMutation = { __typename?: 'Mutation', cartCreate?: { __typ
 export type CartLinesAddMutationVariables = Exact<{
   lines: Array<CartLineInput> | CartLineInput;
   cartId: Scalars['ID'];
-  first?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type CartLinesAddMutation = { __typename?: 'Mutation', cartLinesAdd?: { __typename?: 'CartLinesAddPayload', cart?: { __typename?: 'Cart', id: string, estimatedCost: { __typename?: 'CartEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', quantity: number } }> } } | null } | null };
+export type CartLinesAddMutation = { __typename?: 'Mutation', cartLinesAdd?: { __typename?: 'CartLinesAddPayload', cart?: { __typename?: 'Cart', id: string } | null } | null };

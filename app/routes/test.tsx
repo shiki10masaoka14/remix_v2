@@ -1,60 +1,107 @@
-import { Button, Input } from "@chakra-ui/react";
+import {
+  Button,
+  Heading,
+  Input,
+  Link,
+} from "@chakra-ui/react";
 import { VFC } from "react";
 import {
   ActionFunction,
   Form,
+  LoaderFunction,
   redirect,
-  useFetcher,
+  useLoaderData,
 } from "remix";
-import { Layout } from "~/components/Layout";
-import { cartCreateResolver } from "~/utils/shopify/resolver/cartCreateResolver";
+import { Link as RemixLink } from "remix";
+import { userPrefs } from "~/utils/cookies";
+import { CartLinesAddResolver } from "~/utils/shopify/resolver/cartLinesAddResolver";
+import { cartQuantityResolver } from "~/utils/shopify/resolver/cartQuantityResolver";
+import { CartQuantityQuery } from "~/utils/shopify/shopifyGenerated";
+
+// ここまで
+//
+//
+//
+// ここから
+
+export const loader: LoaderFunction = async ({
+  request,
+}) => {
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie =
+    (await userPrefs.parse(cookieHeader)) || {};
+
+  const { data: cartQuantityData } =
+    await cartQuantityResolver(cookie?.cartId, 10);
+
+  return { cartQuantityData };
+};
+
+// ここまで
+//
+//
+//
+// ここから
 
 export const action: ActionFunction = async ({
   request,
 }) => {
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie =
+    (await userPrefs.parse(cookieHeader)) || {};
+
   const formData = await request.formData();
   const value = Object.fromEntries(formData);
-  const { quantity, merchandiseId } = value;
+  const { testNum } = value;
 
-  const { data } = await cartCreateResolver(
-    {
-      lines: [
-        {
-          quantity: Number(quantity),
-          merchandiseId: String(merchandiseId),
-        },
-      ],
-    },
-    10,
+  await CartLinesAddResolver(
+    [
+      {
+        merchandiseId:
+          "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC80MDA0NzUxMzczMTIwNA==",
+        quantity: Number(testNum),
+      },
+    ],
+    cookie.cartId,
   );
 
-  redirect(`/`);
+  return redirect("/test", {
+    headers: {
+      "Set-Cookie": await userPrefs.serialize(cookie),
+    },
+  });
 };
 
-const Index: VFC = () => {
-  const data = useFetcher();
+// ここまで
+//
+//
+//
+// ここから
+
+const Test: VFC = () => {
+  const { cartQuantityData } = useLoaderData();
+  const cartQuantity =
+    cartQuantityData as CartQuantityQuery;
+  const sum = cartQuantity.cart?.lines.edges.reduce(
+    (p, x) => p + x.node.quantity,
+    0,
+  );
+  console.log(sum);
 
   return (
-    <Layout>
+    <>
+      <Heading>
+        {cartQuantity?.cart?.lines.edges[0].node.quantity}
+      </Heading>
+      <Link as={RemixLink} to={`/test2`}>
+        View More
+      </Link>
+
       <Form method="post">
-        <Input name="quantity" placeholder="個数を入力" />
-        <Button
-          type="submit"
-          name="merchandiseId"
-          value={
-            "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC80MDA0NzUxMzczMTIwNA=="
-          }
-        >
-          カートに追加
-        </Button>
+        <Input name="testNum" type={"number"} />
+        <Button type="submit">add</Button>
       </Form>
-      {!data ? null : (
-        <>
-          <p>{data}</p>
-          <p>{data}</p>
-        </>
-      )}
-    </Layout>
+    </>
   );
 };
-export default Index;
+export default Test;

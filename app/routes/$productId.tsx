@@ -17,15 +17,39 @@ import { VFC } from "react";
 import {
   ActionFunction,
   Form,
+  redirect,
   useNavigate,
 } from "remix";
 import { LoaderFunction, useLoaderData } from "remix";
+import { userPrefs } from "~/utils/cookies";
 import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
 import { cartCreateResolver } from "~/utils/shopify/resolver/cartCreateResolver";
 import { productResolver } from "~/utils/shopify/resolver/productResolver";
-import {
-  FindProductQuery,
-} from "~/utils/shopify/shopifyGenerated";
+import { FindProductQuery } from "~/utils/shopify/shopifyGenerated";
+
+// ここまで
+//
+//
+//
+// ここから
+
+export const loader: LoaderFunction = async ({
+  params,
+  request,
+}) => {
+  const { shopify } = await productResolver(
+    params.productId,
+  );
+  const { product } = shopify;
+
+  const { asset } = await logoResolver();
+
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie =
+    (await userPrefs.parse(cookieHeader)) || {};
+
+  return { product, asset, cartId: cookie.cartId };
+};
 
 // ここまで
 //
@@ -37,11 +61,15 @@ export const action: ActionFunction = async ({
   request,
   params,
 }) => {
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie =
+    (await userPrefs.parse(cookieHeader)) || {};
+
   const formData = await request.formData();
   const value = Object.fromEntries(formData);
   const { quantity, merchandiseId } = value;
 
-  const { data } = await cartCreateResolver(
+  const { data: cartCreateData } = await cartCreateResolver(
     {
       lines: [
         {
@@ -50,23 +78,15 @@ export const action: ActionFunction = async ({
         },
       ],
     },
-    10,
   );
 
-  return { data };
-};
+  cookie.cartId = cartCreateData.cartCreate.cart.id;
 
-export const loader: LoaderFunction = async ({
-  params,
-}) => {
-  const { shopify } = await productResolver(
-    params.productId,
-  );
-  const { product } = shopify;
-
-  const { asset } = await logoResolver();
-
-  return { product, asset };
+  return redirect(`/${params.productId}`, {
+    headers: {
+      "Set-Cookie": await userPrefs.serialize(cookie),
+    },
+  });
 };
 
 // ここまで
