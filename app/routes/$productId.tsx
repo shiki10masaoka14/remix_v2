@@ -24,6 +24,8 @@ import { LoaderFunction, useLoaderData } from "remix";
 import { userPrefs } from "~/utils/cookies";
 import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
 import { cartCreateResolver } from "~/utils/shopify/resolver/cartCreateResolver";
+import { CartLinesAddResolver } from "~/utils/shopify/resolver/cartLinesAddResolver";
+import { cartQuantityResolver } from "~/utils/shopify/resolver/cartQuantityResolver";
 import { productResolver } from "~/utils/shopify/resolver/productResolver";
 import { FindProductQuery } from "~/utils/shopify/shopifyGenerated";
 
@@ -48,7 +50,10 @@ export const loader: LoaderFunction = async ({
   const cookie =
     (await userPrefs.parse(cookieHeader)) || {};
 
-  return { product, asset, cartId: cookie.cartId };
+  const { data: cartQuantityData } =
+    await cartQuantityResolver(cookie?.cartId, 10);
+
+  return { product, asset, cartQuantityData };
 };
 
 // ここまで
@@ -69,18 +74,29 @@ export const action: ActionFunction = async ({
   const value = Object.fromEntries(formData);
   const { quantity, merchandiseId } = value;
 
-  const { data: cartCreateData } = await cartCreateResolver(
-    {
-      lines: [
+  if (!cookie.cartId) {
+    const { data: cartCreateData } =
+      await cartCreateResolver({
+        lines: [
+          {
+            quantity: Number(quantity),
+            merchandiseId: String(merchandiseId),
+          },
+        ],
+      });
+
+    cookie.cartId = cartCreateData.cartCreate.cart.id;
+  } else {
+    await CartLinesAddResolver(
+      [
         {
           quantity: Number(quantity),
           merchandiseId: String(merchandiseId),
         },
       ],
-    },
-  );
-
-  cookie.cartId = cartCreateData.cartCreate.cart.id;
+      cookie.cartId,
+    );
+  }
 
   return redirect(`/${params.productId}`, {
     headers: {
