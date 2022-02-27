@@ -1,7 +1,6 @@
 export const cartResolver = async (
+  id: string,
   first: number,
-  id_cart: string,
-  id_product: string,
 ) => {
   const { data } = await fetch(SHOPIFY_ENDPOINT, {
     method: "POST",
@@ -12,37 +11,49 @@ export const cartResolver = async (
     },
     body: JSON.stringify({
       query: `
-query FindCart(
-  $id_cart: ID!
-  $first: Int
-  $id_product: ID!
-) {
-  cart(id: $id_cart) {
-    id
-    lines(first: $first) {
-      edges {
-        node {
-          quantity
+      query Cart($id: ID!, $first: Int) {
+        cart(id: $id) {
           estimatedCost {
             totalAmount {
               amount
-              currencyCode
+            }
+          }
+          lines(first: $first) {
+            edges {
+              node {
+                id
+                quantity
+                estimatedCost {
+                  totalAmount {
+                    amount
+                  }
+                }
+                merchandise {
+                  ... on ProductVariant {
+                    product {
+                      title
+                      variants(first: $first) {
+                        edges {
+                          node {
+                            id
+                            priceV2 {
+                              amount
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
-    }
-  }
-  product(id: $id_product) {
-    id
-    title
-  }
-}
       `,
       variables: {
+        id,
         first,
-        id_cart,
-        id_product,
       },
     }),
   }).then((res) => res.json());

@@ -6354,6 +6354,14 @@ export type CartQuantityQueryVariables = Exact<{
 
 export type CartQuantityQuery = { __typename?: 'QueryRoot', cart?: { __typename?: 'Cart', lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', quantity: number } }> } } | null };
 
+export type CartQueryVariables = Exact<{
+  id: Scalars['ID'];
+  first?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type CartQuery = { __typename?: 'QueryRoot', cart?: { __typename?: 'Cart', estimatedCost: { __typename?: 'CartEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', id: string, quantity: number, estimatedCost: { __typename?: 'CartLineEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, merchandise: { __typename?: 'ProductVariant', product: { __typename?: 'Product', title: string, variants: { __typename?: 'ProductVariantConnection', edges: Array<{ __typename?: 'ProductVariantEdge', node: { __typename?: 'ProductVariant', id: string, priceV2: { __typename?: 'MoneyV2', amount: any } } }> } } } } }> } } | null };
+
 export type CartCreateMutationVariables = Exact<{
   input?: InputMaybe<CartInput>;
 }>;

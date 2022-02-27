@@ -34,7 +34,7 @@ export const loader: LoaderFunction = async ({
   const { data: cartQuantityData } =
     await cartQuantityResolver(cookie?.cartId, 10);
 
-  return { cartQuantityData };
+  return { cartQuantityData, cartId: cookie.cartId };
 };
 
 // ここまで
@@ -88,11 +88,14 @@ const Test: VFC = () => {
   );
   console.log(sum);
 
+  const { cartId } = useLoaderData();
+
   return (
     <>
       <Heading>
         {cartQuantity?.cart?.lines.edges[0].node.quantity}
       </Heading>
+      <Heading>cart id: {cartId}</Heading>
       <Link as={RemixLink} to={`/test2`}>
         View More
       </Link>

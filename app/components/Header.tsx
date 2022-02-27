@@ -47,12 +47,14 @@ export const Header: VFC = memo(() => {
           {!cartQuantity ? (
             <Heading>0</Heading>
           ) : (
-            <Heading>
-              {cartQuantity.cart?.lines.edges.reduce(
-                (p, x) => p + x.node.quantity,
-                0,
-              )}
-            </Heading>
+            <Link as={RemixLink} to={"/cart"}>
+              <Heading>
+                {cartQuantity.cart?.lines.edges.reduce(
+                  (p, x) => p + x.node.quantity,
+                  0,
+                )}
+              </Heading>
+            </Link>
           )}
           <Icon
             as={RiMenuFoldLine}

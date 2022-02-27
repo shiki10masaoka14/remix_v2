@@ -74,6 +74,46 @@ query CartQuantity($id: ID!, $first: Int) {
   }
 }
 
+query Cart($id: ID!, $first: Int) {
+  cart(id: $id) {
+    estimatedCost {
+      totalAmount {
+        amount
+      }
+    }
+    lines(first: $first) {
+      edges {
+        node {
+          id
+          quantity
+          estimatedCost {
+            totalAmount {
+              amount
+            }
+          }
+          merchandise {
+            ... on ProductVariant {
+              product {
+                title
+                variants(first: $first) {
+                  edges {
+                    node {
+                      id
+                      priceV2 {
+                        amount
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 # ここまでquery
 #
 #
@@ -87,7 +127,10 @@ mutation CartCreate($input: CartInput) {
   }
 }
 
-mutation CartLinesAdd($lines: [CartLineInput!]!, $cartId: ID!) {
+mutation CartLinesAdd(
+  $lines: [CartLineInput!]!
+  $cartId: ID!
+) {
   cartLinesAdd(lines: $lines, cartId: $cartId) {
     cart {
       id
