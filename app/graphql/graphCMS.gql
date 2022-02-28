@@ -11,3 +11,25 @@ query GetLogo {
     url
   }
 }
+
+mutation UpdateTest($number: Int, $id: ID) {
+  updateTest(
+    data: { number: $number }
+    where: { id: $id }
+  ) {
+    id
+    number
+  }
+  publishTest(where: { id: $id }, to: PUBLISHED) {
+    id
+    stage
+  }
+}
+
+query Tests {
+  tests(first: 10) {
+    id
+    number
+    stage
+  }
+}

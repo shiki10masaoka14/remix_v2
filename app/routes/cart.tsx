@@ -12,7 +12,12 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { VFC } from "react";
-import { Form, LoaderFunction, useLoaderData } from "remix";
+import {
+  ActionFunction,
+  Form,
+  LoaderFunction,
+  useLoaderData,
+} from "remix";
 import { userPrefs } from "~/utils/cookies";
 import { cartResolver } from "~/utils/shopify/resolver/cartResolver";
 import { CartQuery } from "~/utils/shopify/shopifyGenerated";
@@ -39,6 +44,10 @@ export const loader: LoaderFunction = async ({
 
   return { cart };
 };
+
+export const action: ActionFunction = async ({
+  request,
+}) => {};
 
 const Cart: VFC = () => {
   const { cart } = useLoaderData<CartQuery>();

@@ -1,10 +1,5 @@
-import {
-  Button,
-  Heading,
-  Input,
-  Link,
-} from "@chakra-ui/react";
-import { VFC } from "react";
+import { Button, Input } from "@chakra-ui/react";
+import { useState, VFC } from "react";
 import {
   ActionFunction,
   Form,
@@ -12,11 +7,11 @@ import {
   redirect,
   useLoaderData,
 } from "remix";
-import { Link as RemixLink } from "remix";
-import { userPrefs } from "~/utils/cookies";
-import { CartLinesAddResolver } from "~/utils/shopify/resolver/cartLinesAddResolver";
-import { cartQuantityResolver } from "~/utils/shopify/resolver/cartQuantityResolver";
-import { CartQuantityQuery } from "~/utils/shopify/shopifyGenerated";
+import { TestsQuery } from "~/utils/graphCMS/graphCMSGenerated";
+import {
+  testsResolver,
+  updateTestResolver,
+} from "~/utils/graphCMS/resolver/testResolver";
 
 // ここまで
 //
@@ -24,17 +19,11 @@ import { CartQuantityQuery } from "~/utils/shopify/shopifyGenerated";
 //
 // ここから
 
-export const loader: LoaderFunction = async ({
-  request,
-}) => {
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie =
-    (await userPrefs.parse(cookieHeader)) || {};
+export const loader: LoaderFunction = async () => {
+  const { data } = await testsResolver();
+  const tests = data?.tests;
 
-  const { data: cartQuantityData } =
-    await cartQuantityResolver(cookie?.cartId, 10);
-
-  return { cartQuantityData, cartId: cookie.cartId };
+  return { tests };
 };
 
 // ここまで
@@ -46,30 +35,16 @@ export const loader: LoaderFunction = async ({
 export const action: ActionFunction = async ({
   request,
 }) => {
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie =
-    (await userPrefs.parse(cookieHeader)) || {};
-
   const formData = await request.formData();
   const value = Object.fromEntries(formData);
-  const { testNum } = value;
+  const { num } = value;
 
-  await CartLinesAddResolver(
-    [
-      {
-        merchandiseId:
-          "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC80MDA0NzUxMzczMTIwNA==",
-        quantity: Number(testNum),
-      },
-    ],
-    cookie.cartId,
+  await updateTestResolver(
+    "cl06m4ncl5hae0b5d9zyrd34p",
+    Number(num),
   );
 
-  return redirect("/test", {
-    headers: {
-      "Set-Cookie": await userPrefs.serialize(cookie),
-    },
-  });
+  return redirect(`test`);
 };
 
 // ここまで
@@ -79,32 +54,29 @@ export const action: ActionFunction = async ({
 // ここから
 
 const Test: VFC = () => {
-  const { cartQuantityData } = useLoaderData();
-  const cartQuantity =
-    cartQuantityData as CartQuantityQuery;
-  const sum = cartQuantity.cart?.lines.edges.reduce(
-    (p, x) => p + x.node.quantity,
-    0,
-  );
-  console.log(sum);
+  const { tests } = useLoaderData<TestsQuery>();
+  const [num, setNum] = useState(tests[0].number);
 
-  const { cartId } = useLoaderData();
-
-  return (
+  return tests ? (
     <>
-      <Heading>
-        {cartQuantity?.cart?.lines.edges[0].node.quantity}
-      </Heading>
-      <Heading>cart id: {cartId}</Heading>
-      <Link as={RemixLink} to={`/test2`}>
-        View More
-      </Link>
-
       <Form method="post">
-        <Input name="testNum" type={"number"} />
-        <Button type="submit">add</Button>
+        <Button
+          type="submit"
+          onClick={() => setNum(num && num - 1)}
+        >
+          -
+        </Button>
+        <Input name="num" value={Number(num)} />
+        <Button
+          type="submit"
+          onClick={() => setNum(num && num + 1)}
+        >
+          +
+        </Button>
       </Form>
     </>
+  ) : (
+    <>??????</>
   );
 };
 export default Test;
