@@ -33,6 +33,7 @@ export const loader: LoaderFunction = async ({
   const { data: cartData } = await cartResolver(
     cookie?.cartId,
     20,
+    { maxWidth: 300 },
   );
   const cart = cartData?.cart;
 
@@ -46,26 +47,40 @@ const Cart: VFC = () => {
     <VStack spacing={20} my={20}>
       <Heading>Shopping Cart</Heading>
       <Divider />
-      <Flex>
-        <Image />
-        <Box>
-          <Heading></Heading>
-          <HStack>
-            <Text></Text>
-            <Text>inc. tax</Text>
-          </HStack>
-          <HStack>
-            <Button>-</Button>
-            <Text></Text>
-            <Button>+</Button>
-          </HStack>
-        </Box>
-      </Flex>
+      {cart.lines.edges.map((line) => (
+        <Flex key={line.node.id}>
+          <Image
+            src={
+              line.node.merchandise.product.featuredImage
+                ?.url
+            }
+          />
+          <Box>
+            <Heading>
+              {line.node.merchandise.product.title}
+            </Heading>
+            <HStack>
+              <Text>
+                {
+                  line.node.merchandise.product.variants
+                    .edges[0].node.priceV2.amount
+                }
+              </Text>
+              <Text>inc. tax</Text>
+            </HStack>
+            <HStack>
+              <Button>-</Button>
+              <Text>{line.node.quantity}</Text>
+              <Button>+</Button>
+            </HStack>
+          </Box>
+        </Flex>
+      ))}
       <Divider />
       <Flex>
         <Text>Subtotal/小計</Text>
         <Spacer />
-        <Text></Text>
+        <Text>{cart.estimatedCost.totalAmount.amount}</Text>
         <Text>inc. tax</Text>
       </Flex>
       <Box>

@@ -1,6 +1,9 @@
+import { ImageTransformInput } from "../shopifyGenerated";
+
 export const cartResolver = async (
   id: string,
   first: number,
+  transform: ImageTransformInput,
 ) => {
   const { data } = await fetch(SHOPIFY_ENDPOINT, {
     method: "POST",
@@ -11,7 +14,7 @@ export const cartResolver = async (
     },
     body: JSON.stringify({
       query: `
-      query Cart($id: ID!, $first: Int) {
+      query Cart($id: ID!, $first: Int, $transform: ImageTransformInput) {
         cart(id: $id) {
           estimatedCost {
             totalAmount {
@@ -32,6 +35,9 @@ export const cartResolver = async (
                   ... on ProductVariant {
                     product {
                       title
+                      featuredImage {
+                        url(transform: $transform)
+                      }
                       variants(first: $first) {
                         edges {
                           node {
@@ -54,6 +60,7 @@ export const cartResolver = async (
       variables: {
         id,
         first,
+        transform,
       },
     }),
   }).then((res) => res.json());

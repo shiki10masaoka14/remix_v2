@@ -74,7 +74,11 @@ query CartQuantity($id: ID!, $first: Int) {
   }
 }
 
-query Cart($id: ID!, $first: Int) {
+query Cart(
+  $id: ID!
+  $first: Int
+  $transform: ImageTransformInput
+) {
   cart(id: $id) {
     estimatedCost {
       totalAmount {
@@ -95,6 +99,9 @@ query Cart($id: ID!, $first: Int) {
             ... on ProductVariant {
               product {
                 title
+                featuredImage {
+                  url(transform: $transform)
+                }
                 variants(first: $first) {
                   edges {
                     node {
@@ -134,6 +141,24 @@ mutation CartLinesAdd(
   cartLinesAdd(lines: $lines, cartId: $cartId) {
     cart {
       id
+    }
+  }
+}
+
+mutation CartLinesUpdate(
+  $cartId: ID!
+  $lines: [CartLineUpdateInput!]!
+  $first: Int
+) {
+  cartLinesUpdate(cartId: $cartId, lines: $lines) {
+    cart {
+      lines(first: $first) {
+        edges {
+          node {
+            quantity
+          }
+        }
+      }
     }
   }
 }
