@@ -54,22 +54,23 @@ export const action: ActionFunction = async ({
 
 const Test: VFC = () => {
   const { tests } = useLoaderData<TestsQuery>();
-  const [numbers, setNumbers] = useState([
-    { a: 1 },
-    { a: 2 },
-  ]);
+  const [numbers, setNumbers] = useState(tests);
+  console.log(numbers);
 
   return tests ? (
     <>
       {numbers.map((num, index) => (
-        <Box>
-          <Heading>{num.a}</Heading>
+        <Box key={num.id}>
+          <Heading>{num.number}</Heading>
           <Button
             onClick={() => {
               setNumbers(
                 numbers.map((num2, index2) =>
                   index2 === index
-                    ? { ...num2, a: num2.a + 1 }
+                    ? {
+                        ...num2,
+                        number: Number(num2.number) + 1,
+                      }
                     : num2,
                 ),
               );
