@@ -1,8 +1,7 @@
-import { Button, Input } from "@chakra-ui/react";
+import { Box, Button, Heading } from "@chakra-ui/react";
 import { useState, VFC } from "react";
 import {
   ActionFunction,
-  Form,
   LoaderFunction,
   redirect,
   useLoaderData,
@@ -55,25 +54,31 @@ export const action: ActionFunction = async ({
 
 const Test: VFC = () => {
   const { tests } = useLoaderData<TestsQuery>();
-  const [num, setNum] = useState(tests[0].number);
+  const [numbers, setNumbers] = useState([
+    { a: 1 },
+    { a: 2 },
+  ]);
 
   return tests ? (
     <>
-      <Form method="post">
-        <Button
-          type="submit"
-          onClick={() => setNum(num && num - 1)}
-        >
-          -
-        </Button>
-        <Input name="num" value={Number(num)} />
-        <Button
-          type="submit"
-          onClick={() => setNum(num && num + 1)}
-        >
-          +
-        </Button>
-      </Form>
+      {numbers.map((num, index) => (
+        <Box>
+          <Heading>{num.a}</Heading>
+          <Button
+            onClick={() => {
+              setNumbers(
+                numbers.map((num2, index2) =>
+                  index2 === index
+                    ? { ...num2, a: num2.a + 1 }
+                    : num2,
+                ),
+              );
+            }}
+          >
+            +
+          </Button>
+        </Box>
+      ))}
     </>
   ) : (
     <>??????</>
