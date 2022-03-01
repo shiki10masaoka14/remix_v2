@@ -6,21 +6,19 @@ import {
   Heading,
   HStack,
   Image,
+  Input,
   Spacer,
   Text,
   Textarea,
   VStack,
 } from "@chakra-ui/react";
-import { VFC } from "react";
-import {
-  ActionFunction,
-  Form,
-  LoaderFunction,
-  useLoaderData,
-} from "remix";
+import { useState, VFC } from "react";
+import { Form, LoaderFunction, useLoaderData } from "remix";
 import { userPrefs } from "~/utils/cookies";
 import { cartResolver } from "~/utils/shopify/resolver/cartResolver";
-import { CartQuery } from "~/utils/shopify/shopifyGenerated";
+import {
+  CartQuery,
+} from "~/utils/shopify/shopifyGenerated";
 
 // ここまで
 //
@@ -45,18 +43,24 @@ export const loader: LoaderFunction = async ({
   return { cart };
 };
 
-export const action: ActionFunction = async ({
-  request,
-}) => {};
+// ここまで
+//
+//
+//
+// ここから
 
 const Cart: VFC = () => {
   const { cart } = useLoaderData<CartQuery>();
+  const [quantity, setQuantity] = useState(
+    cart?.lines.edges,
+  );
+  console.log(quantity);
 
-  return cart ? (
+  return quantity ? (
     <VStack spacing={20} my={20}>
       <Heading>Shopping Cart</Heading>
       <Divider />
-      {cart.lines.edges.map((line) => (
+      {quantity.map((line, index) => (
         <Flex key={line.node.id}>
           <Image
             src={
@@ -77,11 +81,71 @@ const Cart: VFC = () => {
               </Text>
               <Text>inc. tax</Text>
             </HStack>
-            <HStack>
-              <Button>-</Button>
-              <Text>{line.node.quantity}</Text>
-              <Button>+</Button>
-            </HStack>
+            <Form
+              method="post"
+              action="/api/cartFluctuation"
+            >
+              <HStack>
+                <Button
+                  name="id"
+                  value={line.node.id}
+                  onClick={() => {
+                    setQuantity(
+                      quantity?.map((qua, index2) =>
+                        index === index2
+                          ? {
+                              ...qua,
+                              node: {
+                                quantity:
+                                  qua.node.quantity - 1,
+                                id: qua.node.id,
+                                estimatedCost:
+                                  qua.node.estimatedCost,
+                                merchandise:
+                                  qua.node.merchandise,
+                              },
+                            }
+                          : qua,
+                      ),
+                    );
+                  }}
+                  type="submit"
+                >
+                  -
+                </Button>
+                <Input
+                  name="quantity"
+                  value={line.node.quantity}
+                />
+                <Button
+                  name="id"
+                  value={line.node.id}
+                  onClick={() => {
+                    setQuantity(
+                      quantity?.map((qua, index2) =>
+                        index === index2
+                          ? {
+                              ...qua,
+                              node: {
+                                quantity:
+                                  qua.node.quantity + 1,
+                                id: qua.node.id,
+                                estimatedCost:
+                                  qua.node.estimatedCost,
+                                merchandise:
+                                  qua.node.merchandise,
+                              },
+                            }
+                          : qua,
+                      ),
+                    );
+                  }}
+                  type="submit"
+                >
+                  +
+                </Button>
+              </HStack>
+            </Form>
           </Box>
         </Flex>
       ))}
@@ -89,7 +153,9 @@ const Cart: VFC = () => {
       <Flex>
         <Text>Subtotal/小計</Text>
         <Spacer />
-        <Text>{cart.estimatedCost.totalAmount.amount}</Text>
+        <Text>
+          {cart?.estimatedCost.totalAmount.amount}
+        </Text>
         <Text>inc. tax</Text>
       </Flex>
       <Box>

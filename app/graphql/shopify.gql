@@ -148,17 +148,10 @@ mutation CartLinesAdd(
 mutation CartLinesUpdate(
   $cartId: ID!
   $lines: [CartLineUpdateInput!]!
-  $first: Int
 ) {
   cartLinesUpdate(cartId: $cartId, lines: $lines) {
     cart {
-      lines(first: $first) {
-        edges {
-          node {
-            quantity
-          }
-        }
-      }
+      id
     }
   }
 }

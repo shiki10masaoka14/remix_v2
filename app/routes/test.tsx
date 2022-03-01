@@ -1,16 +1,8 @@
-import { Box, Button, Heading } from "@chakra-ui/react";
+import { Button, HStack, Input } from "@chakra-ui/react";
 import { useState, VFC } from "react";
-import {
-  ActionFunction,
-  LoaderFunction,
-  redirect,
-  useLoaderData,
-} from "remix";
+import { Form, LoaderFunction, useLoaderData } from "remix";
 import { TestsQuery } from "~/utils/graphCMS/graphCMSGenerated";
-import {
-  testsResolver,
-  updateTestResolver,
-} from "~/utils/graphCMS/resolver/testResolver";
+import { testsResolver } from "~/utils/graphCMS/resolver/testResolver";
 
 // ここまで
 //
@@ -31,54 +23,60 @@ export const loader: LoaderFunction = async () => {
 //
 // ここから
 
-export const action: ActionFunction = async ({
-  request,
-}) => {
-  const formData = await request.formData();
-  const value = Object.fromEntries(formData);
-  const { num } = value;
-
-  await updateTestResolver(
-    "cl06m4ncl5hae0b5d9zyrd34p",
-    Number(num),
-  );
-
-  return redirect(`test`);
-};
-
-// ここまで
-//
-//
-//
-// ここから
-
 const Test: VFC = () => {
   const { tests } = useLoaderData<TestsQuery>();
   const [numbers, setNumbers] = useState(tests);
-  console.log(numbers);
 
   return tests ? (
     <>
       {numbers.map((num, index) => (
-        <Box key={num.id}>
-          <Heading>{num.number}</Heading>
-          <Button
-            onClick={() => {
-              setNumbers(
-                numbers.map((num2, index2) =>
-                  index2 === index
-                    ? {
-                        ...num2,
-                        number: Number(num2.number) + 1,
-                      }
-                    : num2,
-                ),
-              );
-            }}
-          >
-            +
-          </Button>
-        </Box>
+        <Form method="post" key={num.id} action="/api/test">
+          <HStack>
+            <Button
+              name="id"
+              value={num.id}
+              type="submit"
+              onClick={() => {
+                setNumbers(
+                  numbers.map((num2, index2) =>
+                    index2 === index
+                      ? {
+                          ...num2,
+                          number: Number(num2.number) - 1,
+                        }
+                      : num2,
+                  ),
+                );
+              }}
+            >
+              -
+            </Button>
+            <Input
+              value={Number(num.number)}
+              name="num"
+              w={100}
+            />
+            <Button
+              name="id"
+              value={num.id}
+              type="submit"
+              onClick={() => {
+                setNumbers(
+                  numbers.map((num2, index2) =>
+                    index2 === index
+                      ? {
+                          ...num2,
+                          number: Number(num2.number) + 1,
+                        }
+                      : num2,
+                  ),
+                );
+              }}
+            >
+              +
+            </Button>
+          </HStack>
+        </Form>
       ))}
     </>
   ) : (

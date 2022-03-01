@@ -3,7 +3,6 @@ import { CartLineUpdateInput } from "../shopifyGenerated";
 export const cartLinesUpdateResolver = async (
   cartId: string,
   lines: [CartLineUpdateInput],
-  first: number,
 ) => {
   const { data } = await fetch(SHOPIFY_ENDPOINT, {
     method: "POST",
@@ -17,17 +16,10 @@ export const cartLinesUpdateResolver = async (
       mutation CartLinesUpdate(
         $cartId: ID!
         $lines: [CartLineUpdateInput!]!
-        $first: Int
       ) {
         cartLinesUpdate(cartId: $cartId, lines: $lines) {
           cart {
-            lines(first: $first) {
-              edges {
-                node {
-                  quantity
-                }
-              }
-            }
+            id
           }
         }
       }
@@ -35,7 +27,6 @@ export const cartLinesUpdateResolver = async (
       variables: {
         cartId,
         lines,
-        first,
       },
     }),
   }).then((res) => res.json());

@@ -6,12 +6,9 @@ export const action: ActionFunction = async ({
 }) => {
   const formData = await request.formData();
   const value = Object.fromEntries(formData);
-  const { num } = value;
+  const { id, num } = value;
 
-  await updateTestResolver(
-    "cl06m4ncl5hae0b5d9zyrd34p",
-    Number(num),
-  );
+  await updateTestResolver(String(id), Number(num));
 
   return redirect(`test`);
 };

@@ -1,26 +1,50 @@
-import { Button, Input } from "@chakra-ui/react";
-import { VFC } from "react";
-import { Form, LoaderFunction } from "remix";
-import { userPrefs } from "~/utils/cookies";
+import {
+  Button,
+  Container,
+  Heading,
+} from "@chakra-ui/react";
+import { useState, VFC } from "react";
 
-export const loader: LoaderFunction = async ({
-  request,
-}) => {
-  const cookieHeader = request.headers.get("Cookie");
-  const cookie =
-    (await userPrefs.parse(cookieHeader)) || {};
+const Test2: VFC = () => {
+  const testData = [
+    { node: { quantity: 1, text: "abc" } },
+    { node: { quantity: 10, text: "abc" } },
+    { node: { quantity: 100, text: "abc" } },
+  ];
 
-  return { cartId: cookie?.cartId };
-};
+  const [testArray, setTestArray] = useState(testData);
+  console.log(testArray);
 
-const Test: VFC = () => {
   return (
     <>
-      <Form method="post">
-        <Input />
-        <Button type="submit">add</Button>
-      </Form>
+      {testArray.map((test, index) => (
+        <Container>
+          <Heading>
+            {test.node.text}
+            {test.node.quantity}
+          </Heading>
+          <Button
+            onClick={() =>
+              setTestArray(
+                testArray.map((test2, index2) =>
+                  index === index2
+                    ? {
+                        ...test2,
+                        node: {
+                          quantity: test2.node.quantity + 1,
+                          text: test2.node.text,
+                        },
+                      }
+                    : test2,
+                ),
+              )
+            }
+          >
+            +
+          </Button>
+        </Container>
+      ))}
     </>
   );
 };
-export default Test;
+export default Test2;
