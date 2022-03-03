@@ -14,13 +14,19 @@ export const cartResolver = async (
     },
     body: JSON.stringify({
       query: `
-      query Cart($id: ID!, $first: Int, $transform: ImageTransformInput) {
+      query Cart(
+        $id: ID!
+        $first: Int
+        $transform: ImageTransformInput
+      ) {
         cart(id: $id) {
           estimatedCost {
             totalAmount {
               amount
             }
           }
+          note
+          checkoutUrl
           lines(first: $first) {
             edges {
               node {

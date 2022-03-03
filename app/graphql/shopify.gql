@@ -85,6 +85,8 @@ query Cart(
         amount
       }
     }
+    note
+    checkoutUrl
     lines(first: $first) {
       edges {
         node {
@@ -150,6 +152,14 @@ mutation CartLinesUpdate(
   $lines: [CartLineUpdateInput!]!
 ) {
   cartLinesUpdate(cartId: $cartId, lines: $lines) {
+    cart {
+      id
+    }
+  }
+}
+
+mutation CartNoteUpdate($cartId: ID!, $note: String) {
+  cartNoteUpdate(cartId: $cartId, note: $note) {
     cart {
       id
     }

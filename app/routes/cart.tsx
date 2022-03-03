@@ -13,12 +13,17 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useState, VFC } from "react";
-import { Form, LoaderFunction, useLoaderData } from "remix";
-import { userPrefs } from "~/utils/cookies";
-import { cartResolver } from "~/utils/shopify/resolver/cartResolver";
 import {
-  CartQuery,
-} from "~/utils/shopify/shopifyGenerated";
+  ActionFunction,
+  Form,
+  LoaderFunction,
+  redirect,
+  useLoaderData,
+} from "remix";
+import { userPrefs } from "~/utils/cookies";
+import { cartNoteUpdateResolver } from "~/utils/shopify/resolver/cartNoteUpdateResolver";
+import { cartResolver } from "~/utils/shopify/resolver/cartResolver";
+import { CartQuery } from "~/utils/shopify/shopifyGenerated";
 
 // ここまで
 //
@@ -49,12 +54,37 @@ export const loader: LoaderFunction = async ({
 //
 // ここから
 
+export const action: ActionFunction = async ({
+  request,
+}) => {
+  const formData = await request.formData();
+  const value = Object.fromEntries(formData);
+  const { cartNote, url } = value;
+
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie =
+    (await userPrefs.parse(cookieHeader)) || {};
+
+  await cartNoteUpdateResolver(
+    cookie.cartId,
+    String(cartNote),
+  );
+
+  return redirect(`${url}`);
+};
+
+// ここまで
+//
+//
+//
+// ここから
+
 const Cart: VFC = () => {
   const { cart } = useLoaderData<CartQuery>();
   const [quantity, setQuantity] = useState(
     cart?.lines.edges,
   );
-  console.log(quantity);
+  console.log(cart);
 
   return quantity ? (
     <VStack spacing={20} my={20}>
@@ -171,9 +201,16 @@ const Cart: VFC = () => {
       <Form method="post">
         <Box>
           <Heading>備考欄</Heading>
+          <Text>{cart?.note}</Text>
           <Textarea name="cartNote" />
         </Box>
-        <Button type="submit">Check Out/ 決済する</Button>
+        <Button
+          name="url"
+          value={cart?.checkoutUrl}
+          type="submit"
+        >
+          Check Out/ 決済する
+        </Button>
       </Form>
     </VStack>
   ) : (

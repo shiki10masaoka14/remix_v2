@@ -5744,7 +5744,7 @@ export type SellingPlan = {
 /** Represents an association between a variant and a selling plan. Selling plan allocations describe the options offered for each variant, and the price of the variant when purchased with a selling plan. */
 export type SellingPlanAllocation = {
   __typename?: 'SellingPlanAllocation';
-  /** A list of price adjustments, with a maximum of two. When there are two, the first price adjustment goes into effect at the time of purchase, while the second one starts after a certain number of orders. */
+  /** A list of price adjustments, with a maximum of two. When there are two, the first price adjustment goes into effect at the time of purchase, while the second one starts after a certain number of orders. A price adjustment represents how a selling plan affects pricing when a variant is purchased with a selling plan. Prices display in the customer's currency if the shop is configured for it. */
   priceAdjustments: Array<SellingPlanAllocationPriceAdjustment>;
   /** A representation of how products and variants can be sold and purchased. For example, an individual selling plan could be '6 weeks of prepaid granola, delivered weekly'. */
   sellingPlan: SellingPlan;
@@ -6361,7 +6361,7 @@ export type CartQueryVariables = Exact<{
 }>;
 
 
-export type CartQuery = { __typename?: 'QueryRoot', cart?: { __typename?: 'Cart', estimatedCost: { __typename?: 'CartEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', id: string, quantity: number, estimatedCost: { __typename?: 'CartLineEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, merchandise: { __typename?: 'ProductVariant', product: { __typename?: 'Product', title: string, featuredImage?: { __typename?: 'Image', url: any } | null, variants: { __typename?: 'ProductVariantConnection', edges: Array<{ __typename?: 'ProductVariantEdge', node: { __typename?: 'ProductVariant', id: string, priceV2: { __typename?: 'MoneyV2', amount: any } } }> } } } } }> } } | null };
+export type CartQuery = { __typename?: 'QueryRoot', cart?: { __typename?: 'Cart', note?: string | null, checkoutUrl: any, estimatedCost: { __typename?: 'CartEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', id: string, quantity: number, estimatedCost: { __typename?: 'CartLineEstimatedCost', totalAmount: { __typename?: 'MoneyV2', amount: any } }, merchandise: { __typename?: 'ProductVariant', product: { __typename?: 'Product', title: string, featuredImage?: { __typename?: 'Image', url: any } | null, variants: { __typename?: 'ProductVariantConnection', edges: Array<{ __typename?: 'ProductVariantEdge', node: { __typename?: 'ProductVariant', id: string, priceV2: { __typename?: 'MoneyV2', amount: any } } }> } } } } }> } } | null };
 
 export type CartCreateMutationVariables = Exact<{
   input?: InputMaybe<CartInput>;
@@ -6381,8 +6381,15 @@ export type CartLinesAddMutation = { __typename?: 'Mutation', cartLinesAdd?: { _
 export type CartLinesUpdateMutationVariables = Exact<{
   cartId: Scalars['ID'];
   lines: Array<CartLineUpdateInput> | CartLineUpdateInput;
-  first?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type CartLinesUpdateMutation = { __typename?: 'Mutation', cartLinesUpdate?: { __typename?: 'CartLinesUpdatePayload', cart?: { __typename?: 'Cart', lines: { __typename?: 'CartLineConnection', edges: Array<{ __typename?: 'CartLineEdge', node: { __typename?: 'CartLine', quantity: number } }> } } | null } | null };
+export type CartLinesUpdateMutation = { __typename?: 'Mutation', cartLinesUpdate?: { __typename?: 'CartLinesUpdatePayload', cart?: { __typename?: 'Cart', id: string } | null } | null };
+
+export type CartNoteUpdateMutationVariables = Exact<{
+  cartId: Scalars['ID'];
+  note?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CartNoteUpdateMutation = { __typename?: 'Mutation', cartNoteUpdate?: { __typename?: 'CartNoteUpdatePayload', cart?: { __typename?: 'Cart', id: string } | null } | null };
