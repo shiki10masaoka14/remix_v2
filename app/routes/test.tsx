@@ -1,86 +1,61 @@
-import { Button, HStack, Input } from "@chakra-ui/react";
-import { useState, VFC } from "react";
-import { Form, LoaderFunction, useLoaderData } from "remix";
-import { TestsQuery } from "~/utils/graphCMS/graphCMSGenerated";
-import { testsResolver } from "~/utils/graphCMS/resolver/testResolver";
+import {
+  Box,
+  BoxProps,
+  Button,
+  Heading,
+  Icon,
+  Input,
+} from "@chakra-ui/react";
+import { motion } from "framer-motion";
+import { useRef, useState, VFC } from "react";
+import { ImFilePicture } from "react-icons/im";
 
-// ここまで
-//
-//
-//
-// ここから
-
-export const loader: LoaderFunction = async () => {
-  const { data } = await testsResolver();
-  const tests = data?.tests;
-
-  return { tests };
-};
-
-// ここまで
-//
-//
-//
-// ここから
-
+export const MotionBox = motion<BoxProps>(Box);
 const Test: VFC = () => {
-  const { tests } = useLoaderData<TestsQuery>();
-  const [numbers, setNumbers] = useState(tests);
+  const inputEl = useRef<HTMLInputElement>(null);
+  const inputEl2 = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState("");
+  const [fileName, setFileName] = useState<string>();
 
-  return tests ? (
+  return (
     <>
-      {numbers.map((num, index) => (
-        <Form method="post" key={num.id} action="/api/test">
-          <HStack>
-            <Button
-              name="id"
-              value={num.id}
-              type="submit"
-              onClick={() => {
-                setNumbers(
-                  numbers.map((num2, index2) =>
-                    index2 === index
-                      ? {
-                          ...num2,
-                          number: Number(num2.number) - 1,
-                        }
-                      : num2,
-                  ),
-                );
-              }}
-            >
-              -
-            </Button>
-            <Input
-              value={Number(num.number)}
-              name="num"
-              w={100}
-            />
-            <Button
-              name="id"
-              value={num.id}
-              type="submit"
-              onClick={() => {
-                setNumbers(
-                  numbers.map((num2, index2) =>
-                    index2 === index
-                      ? {
-                          ...num2,
-                          number: Number(num2.number) + 1,
-                        }
-                      : num2,
-                  ),
-                );
-              }}
-            >
-              +
-            </Button>
-          </HStack>
-        </Form>
-      ))}
+      <Heading>テスト</Heading>
+      <MotionBox
+        h={"40px"}
+        w={"40px"}
+        bg={"red.300"}
+        animate={{
+          scale: [1, 2, 2, 1, 1],
+          rotate: [0, 0, 270, 270, 0],
+          borderRadius: ["20%", "20%", "50%", "50%", "20%"],
+        }}
+      />
+      <Input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        ref={inputEl}
+      />
+      <Heading>名前: {name}</Heading>
+      <Button
+        onClick={() =>
+          inputEl.current && (inputEl.current.value = "")
+        }
+      >
+        フォーカスを当てる
+      </Button>
+      <Input
+        type={"file"}
+        ref={inputEl2}
+        hidden
+        onChange={() =>
+          setFileName(inputEl2.current?.files?.[0]?.name)
+        }
+      />
+      <Heading>{fileName}</Heading>
+      <Button onClick={() => inputEl2.current?.click()}>
+        <Icon as={ImFilePicture} />
+      </Button>
     </>
-  ) : (
-    <>??????</>
   );
 };
 export default Test;
