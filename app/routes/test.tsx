@@ -3,6 +3,8 @@ import {
   BoxProps,
   Button,
   Heading,
+  Image,
+  Link,
   useBoolean,
 } from "@chakra-ui/react";
 import {
@@ -11,6 +13,20 @@ import {
   useAnimation,
 } from "framer-motion";
 import { VFC } from "react";
+import {
+  Link as RemixLink,
+  LoaderFunction,
+  useLoaderData,
+} from "remix";
+import { Layout } from "~/components/Layout";
+import { GetLogoQuery } from "~/utils/graphCMS/graphCMSGenerated";
+import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
+
+export const loader: LoaderFunction = async () => {
+  const { asset } = await logoResolver();
+
+  return { asset };
+};
 
 export const MotionBox = motion<BoxProps | Transition>(Box);
 
@@ -18,6 +34,7 @@ const Test: VFC = () => {
   const control = useAnimation();
   const control2 = useAnimation();
   const [flag, setFlag] = useBoolean(false);
+  const { asset } = useLoaderData<GetLogoQuery>();
 
   const onClickAnime = () => {
     control.start({ rotate: -45, top: "50%" });
@@ -34,7 +51,8 @@ const Test: VFC = () => {
   };
 
   return (
-    <>
+    <Layout url={asset?.url}>
+      <Image src={asset?.url} />
       <Heading>テスト</Heading>
       <Button onClick={onClickAnime} bg={"cyan.100"}>
         <MotionBox
@@ -104,7 +122,10 @@ const Test: VFC = () => {
           variants={variants2}
         />
       </Button>
-    </>
+      <Link as={RemixLink} to={`/products/1`}>
+        PRODUCTS -kv-
+      </Link>
+    </Layout>
   );
 };
 export default Test;

@@ -1,6 +1,11 @@
 import { Footer } from "./Footer";
 import { Header } from "./Header";
-import { Container, Flex, Spacer } from "@chakra-ui/react";
+import {
+  Container,
+  Flex,
+  Image,
+  Spacer,
+} from "@chakra-ui/react";
 import { memo, ReactNode, VFC } from "react";
 
 // ここまで「import」
@@ -11,16 +16,20 @@ import { memo, ReactNode, VFC } from "react";
 
 type PROPS = {
   children: ReactNode;
+  url: any;
 };
 
-export const Layout: VFC<PROPS> = memo(({ children }) => {
-  return (
-    <Flex minH={"100vh"} direction={"column"}>
-      <Header />
-      <Container maxW={"1040px"}>{children}</Container>
-      <Spacer />
-      <Footer />
-    </Flex>
-  );
-});
+export const Layout: VFC<PROPS> = memo(
+  ({ children, url }) => {
+    return (
+      <Flex minH={"100vh"} direction={"column"}>
+        <Header url={url} />
+        <Container maxW={"1040px"}>{children}</Container>
+        <Image src={url} />
+        <Spacer />
+        <Footer />
+      </Flex>
+    );
+  },
+);
 Layout.displayName = "Layout";
