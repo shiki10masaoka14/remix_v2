@@ -2,71 +2,91 @@ import {
   Box,
   BoxProps,
   Button,
-  Container,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerOverlay,
   Flex,
-  Heading,
+  HStack,
+  Icon,
   Image,
   Link,
-  useBoolean,
-  VStack,
+  Text,
 } from "@chakra-ui/react";
 import { motion, Transition } from "framer-motion";
 import { memo, VFC } from "react";
-import { Link as RemixLink, useLoaderData } from "remix";
+import {
+  MdOutlineRemoveShoppingCart,
+  MdShoppingCart,
+} from "react-icons/md";
+import { useLoaderData, Link as RemixLink } from "remix";
+import { GetLogoQuery } from "~/utils/graphCMS/graphCMSGenerated";
 import { CartQuantityQuery } from "~/utils/shopify/shopifyGenerated";
 
-// ここまで
+// ここまで「import」
 //
 //
 //
 // ここから
 
+type PROPS = {
+  onOpen: any;
+  flag: any;
+};
+
 export const MotionBox = motion<BoxProps | Transition>(Box);
 
-export const Header: VFC<{ url: any }> = memo(({ url }) => {
-  const [flag, setFlag] = useBoolean(false);
+export const Header: VFC<PROPS> = memo(
+  ({ onOpen, flag }) => {
+    const { asset } = useLoaderData<GetLogoQuery>();
 
-  const { cartQuantityData } = useLoaderData();
-  const cartQuantity =
-    cartQuantityData as CartQuantityQuery;
+    const { cartQuantityData } = useLoaderData();
+    const cartQuantity =
+      cartQuantityData as CartQuantityQuery;
 
-  const variants = {
-    closed: { rotate: 0, top: "40%" },
-    open: { rotate: -45, top: "50%" },
-  };
-  const variants2 = {
-    closed: { rotate: 0, top: "60%" },
-    open: { rotate: 45, top: "50%" },
-  };
+    const variants = {
+      closed: { rotate: 0, top: "40%" },
+      open: { rotate: -45, top: "50%" },
+    };
+    const variants2 = {
+      closed: { rotate: 0, top: "60%" },
+      open: { rotate: 45, top: "50%" },
+    };
 
-  return (
-    <>
-      <Container maxW={"1040px"}>
+    // ここまで
+    //
+    //
+    //
+    // ここから
+
+    return (
+      <>
         <Flex
           justify={"space-between"}
           align={"center"}
           h={20}
         >
           <Link as={RemixLink} to={"/"}>
-            <Image src={url} w={"180px"} />
+            <Image src={asset?.url} />
           </Link>
           {!cartQuantity ? (
-            <Heading>0</Heading>
+            <HStack>
+              <Icon
+                fontSize={20}
+                as={MdOutlineRemoveShoppingCart}
+              />
+              <Text>0</Text>
+            </HStack>
           ) : (
             <Link as={RemixLink} to={"/cart"}>
-              <Heading>
-                {cartQuantity.cart?.lines.edges.reduce(
-                  (p, x) => p + x.node.quantity,
-                  0,
-                )}
-              </Heading>
+              <HStack>
+                <Icon fontSize={20} as={MdShoppingCart} />
+                <Text>
+                  {cartQuantity.cart?.lines.edges.reduce(
+                    (p, x) => p + x.node.quantity,
+                    0,
+                  )}
+                </Text>
+              </HStack>
             </Link>
           )}
-          <Button onClick={setFlag.toggle} zIndex={9999}>
+          <Button onClick={onOpen} zIndex={9999}>
             <MotionBox
               display="inline-block"
               position={"absolute"}
@@ -74,7 +94,7 @@ export const Header: VFC<{ url: any }> = memo(({ url }) => {
               h={"2px"}
               w={"60%"}
               background={"gray.400"}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 1 }}
               animate={flag ? "open" : "closed"}
               variants={variants}
             />
@@ -91,38 +111,8 @@ export const Header: VFC<{ url: any }> = memo(({ url }) => {
             />
           </Button>
         </Flex>
-      </Container>
-      <Drawer
-        isOpen={flag}
-        onClose={setFlag.off}
-        size={"full"}
-        placement={"left"}
-        autoFocus={false}
-      >
-        <DrawerOverlay bg={"blackAlpha.800"} />
-        <DrawerContent bg={"transparent"}>
-          <DrawerBody mt={"65px"} color={"white"}>
-            <VStack align={"start"}>
-              <Link as={RemixLink} to={`/products/1`}>
-                PRODUCTS
-              </Link>
-              <Link as={RemixLink} to={`/about`}>
-                ABOUT
-              </Link>
-              <Link as={RemixLink} to={`/company`}>
-                COMPANY
-              </Link>
-              <Link as={RemixLink} to={`/contact`}>
-                CONTACT
-              </Link>
-              <Link as={RemixLink} to={`/contact`}>
-                CONTACT
-              </Link>
-            </VStack>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </>
-  );
-});
+      </>
+    );
+  },
+);
 Header.displayName = "Header";

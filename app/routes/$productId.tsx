@@ -144,8 +144,8 @@ const Product: VFC = () => {
           <Table variant={"unstyled"} size={"sm"}>
             <Tbody>
               {product?.variants.edges[0].node.selectedOptions.map(
-                (option) => (
-                  <Tr>
+                (option, index) => (
+                  <Tr key={index}>
                     <Td textTransform={"uppercase"} px={0}>
                       {option.name} :
                     </Td>

@@ -3,7 +3,6 @@ import {
   BoxProps,
   Button,
   Heading,
-  Image,
   Link,
   useBoolean,
 } from "@chakra-ui/react";
@@ -13,19 +12,24 @@ import {
   useAnimation,
 } from "framer-motion";
 import { VFC } from "react";
-import {
-  Link as RemixLink,
-  LoaderFunction,
-  useLoaderData,
-} from "remix";
+import { Link as RemixLink, LoaderFunction } from "remix";
 import { Layout } from "~/components/Layout";
-import { GetLogoQuery } from "~/utils/graphCMS/graphCMSGenerated";
+import { userPrefs } from "~/utils/cookies";
 import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
+import { cartQuantityResolver } from "~/utils/shopify/resolver/cartQuantityResolver";
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({
+  request,
+}) => {
   const { asset } = await logoResolver();
 
-  return { asset };
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie =
+    (await userPrefs.parse(cookieHeader)) || {};
+  const { data: cartQuantityData } =
+    await cartQuantityResolver(cookie?.cartId, 10);
+
+  return { asset, cartQuantityData };
 };
 
 export const MotionBox = motion<BoxProps | Transition>(Box);
@@ -34,7 +38,6 @@ const Test: VFC = () => {
   const control = useAnimation();
   const control2 = useAnimation();
   const [flag, setFlag] = useBoolean(false);
-  const { asset } = useLoaderData<GetLogoQuery>();
 
   const onClickAnime = () => {
     control.start({ rotate: -45, top: "50%" });
@@ -51,9 +54,9 @@ const Test: VFC = () => {
   };
 
   return (
-    <Layout url={asset?.url}>
-      <Image src={asset?.url} />
+    <Layout>
       <Heading>テスト</Heading>
+
       <Button onClick={onClickAnime} bg={"cyan.100"}>
         <MotionBox
           display="inline-block"
