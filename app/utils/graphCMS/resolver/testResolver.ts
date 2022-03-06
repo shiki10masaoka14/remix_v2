@@ -57,3 +57,28 @@ export const testsResolver = async () => {
 
   return { data };
 };
+
+export const slidesResolver = async () => {
+  const { data } = await fetch(GRAPHCMS_ENDPOINT, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${GRAPHCMS_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: `
+      query Slides {
+        slides {
+          slide {
+            id
+            url
+          }
+        }
+      }
+      `,
+      variables: {},
+    }),
+  }).then((res) => res.json());
+
+  return { data };
+};

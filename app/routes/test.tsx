@@ -3,131 +3,83 @@ import {
   BoxProps,
   Button,
   Heading,
-  Link,
+  Image,
+  ImageProps,
   useBoolean,
 } from "@chakra-ui/react";
 import {
+  AnimatePresence,
   motion,
   Transition,
-  useAnimation,
 } from "framer-motion";
-import { VFC } from "react";
-import { Link as RemixLink, LoaderFunction } from "remix";
+import { useState, VFC } from "react";
+import { LoaderFunction, useLoaderData } from "remix";
 import { Layout } from "~/components/Layout";
 import { userPrefs } from "~/utils/cookies";
+import { SlidesQuery } from "~/utils/graphCMS/graphCMSGenerated";
 import { logoResolver } from "~/utils/graphCMS/resolver/logoResolver";
+import { slidesResolver } from "~/utils/graphCMS/resolver/testResolver";
 import { cartQuantityResolver } from "~/utils/shopify/resolver/cartQuantityResolver";
 
 export const loader: LoaderFunction = async ({
   request,
 }) => {
+  // ロゴ
   const { asset } = await logoResolver();
 
+  // カート
   const cookieHeader = request.headers.get("Cookie");
   const cookie =
     (await userPrefs.parse(cookieHeader)) || {};
   const { data: cartQuantityData } =
     await cartQuantityResolver(cookie?.cartId, 10);
 
-  return { asset, cartQuantityData };
+  // スライド
+  const { data: slidesData } = await slidesResolver();
+  const { slides } = slidesData;
+
+  return { asset, cartQuantityData, slides };
 };
 
 export const MotionBox = motion<BoxProps | Transition>(Box);
+export const MotionImage = motion<ImageProps | Transition>(
+  Image,
+);
 
 const Test: VFC = () => {
-  const control = useAnimation();
-  const control2 = useAnimation();
   const [flag, setFlag] = useBoolean(false);
+  const { slides } = useLoaderData<SlidesQuery>();
+  const [num, setNum] = useState(0);
 
-  const onClickAnime = () => {
-    control.start({ rotate: -45, top: "50%" });
-    control2.start({ rotate: 45, top: "50%" });
-  };
-
-  const variants = {
-    closed: { rotate: 0, top: "40%" },
-    open: { rotate: -45, top: "50%" },
-  };
-  const variants2 = {
-    closed: { rotate: 0, top: "60%" },
-    open: { rotate: 45, top: "50%" },
+  const onClickNext = () => {
+    setNum(num === 2 ? 0 : num + 1);
   };
 
   return (
     <Layout>
       <Heading>テスト</Heading>
-
-      <Button onClick={onClickAnime} bg={"cyan.100"}>
-        <MotionBox
-          display="inline-block"
+      <Button onClick={setFlag.toggle}>next</Button>
+      <AnimatePresence>
+        <MotionImage
+          key={
+            flag
+              ? slides[0].slide[0].id
+              : slides[0].slide[1].id
+          }
+          src={
+            flag
+              ? slides[0].slide[0].url
+              : slides[0].slide[1].url
+          }
+          initial={{ x: "100%", opacity: 0 }}
+          exit={{ x: "-100%", opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 2 }}
+          w={200}
           position={"absolute"}
-          top={"40%"}
-          h={"2px"}
-          w={"60%"}
-          background={"gray.400"}
-          transition={{ duration: 1 }}
-          animate={control}
+          top={300}
         />
-        <MotionBox
-          display="inline-block"
-          position={"absolute"}
-          bottom={"40%"}
-          h={"2px"}
-          w={"60%"}
-          background={"gray.400"}
-          transition={{ duration: 1 }}
-          animate={control2}
-        />
-      </Button>
-      <Button onClick={onClickAnime} bg={"cyan.100"}>
-        <MotionBox
-          display="inline-block"
-          position={"absolute"}
-          top={"40%"}
-          h={"2px"}
-          w={"60%"}
-          background={"gray.400"}
-          transition={{ duration: 1 }}
-          animate={control}
-        />
-        <MotionBox
-          display="inline-block"
-          position={"absolute"}
-          bottom={"40%"}
-          h={"2px"}
-          w={"60%"}
-          background={"gray.400"}
-          transition={{ duration: 1 }}
-          animate={control2}
-        />
-      </Button>
-      <Button onClick={setFlag.toggle}>
-        <MotionBox
-          display="inline-block"
-          position={"absolute"}
-          top={"40%"}
-          h={"2px"}
-          w={"60%"}
-          background={"gray.400"}
-          transition={{ duration: 0.5 }}
-          animate={flag ? "open" : "closed"}
-          variants={variants}
-        />
-        <MotionBox
-          display="inline-block"
-          position={"absolute"}
-          top={"60%"}
-          h={"2px"}
-          w={"60%"}
-          background={"gray.400"}
-          transition={{ duration: 0.5 }}
-          animate={flag ? "open" : "closed"}
-          variants={variants2}
-        />
-      </Button>
-      <Link as={RemixLink} to={`/products/1`}>
-        PRODUCTS -kv-
-      </Link>
+      </AnimatePresence>
     </Layout>
   );
 };

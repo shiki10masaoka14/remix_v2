@@ -33,3 +33,12 @@ query Tests {
     stage
   }
 }
+
+query Slides {
+  slides {
+    slide {
+      id
+      url
+    }
+  }
+}

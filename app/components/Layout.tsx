@@ -47,6 +47,7 @@ export const MotionText = motion<TextProps | Transition>(
 );
 export const MotionBox = motion<BoxProps | Transition>(Box);
 
+// スクロール無効
 export const useDisableScroll = (
   ref: RefObject<HTMLElement>,
   isOpen: boolean,
@@ -79,7 +80,7 @@ export const Layout: VFC<PROPS> = memo(({ children }) => {
   return (
     <>
       <Container maxW={"1040px"}>
-        <Flex direction={"column"} minH={"200vh"} ref={ref}>
+        <Flex direction={"column"} minH={"100vh"} ref={ref}>
           <Header flag={flag} onOpen={setFlag.toggle} />
           <Box>{children}</Box>
           <Spacer />
@@ -109,9 +110,6 @@ export const Layout: VFC<PROPS> = memo(({ children }) => {
                   </Link>
                   <Link as={RemixLink} to={`/company`}>
                     COMPANY
-                  </Link>
-                  <Link as={RemixLink} to={`/contact`}>
-                    CONTACT
                   </Link>
                   <Link as={RemixLink} to={`/contact`}>
                     CONTACT

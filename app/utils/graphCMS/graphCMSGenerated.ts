@@ -67,6 +67,9 @@ export type Asset = Node & {
   updatedBy?: Maybe<User>;
   /** User that last published this document */
   publishedBy?: Maybe<User>;
+  slideAsset: Array<Asset>;
+  slide: Array<Asset>;
+  slideSlide: Array<Slide>;
   scheduledIn: Array<ScheduledOperation>;
   /** List of Asset versions */
   history: Array<Version>;
@@ -127,6 +130,45 @@ export type AssetPublishedByArgs = {
 
 
 /** Asset system model */
+export type AssetSlideAssetArgs = {
+  where?: InputMaybe<AssetWhereInput>;
+  orderBy?: InputMaybe<AssetOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+/** Asset system model */
+export type AssetSlideArgs = {
+  where?: InputMaybe<AssetWhereInput>;
+  orderBy?: InputMaybe<AssetOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+/** Asset system model */
+export type AssetSlideSlideArgs = {
+  where?: InputMaybe<SlideWhereInput>;
+  orderBy?: InputMaybe<SlideOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+/** Asset system model */
 export type AssetScheduledInArgs = {
   where?: InputMaybe<ScheduledOperationWhereInput>;
   skip?: InputMaybe<Scalars['Int']>;
@@ -177,6 +219,9 @@ export type AssetCreateInput = {
   width?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
   mimeType?: InputMaybe<Scalars['String']>;
+  slideAsset?: InputMaybe<AssetCreateManyInlineInput>;
+  slide?: InputMaybe<AssetCreateManyInlineInput>;
+  slideSlide?: InputMaybe<SlideCreateManyInlineInput>;
   /** Inline mutations for managing document localizations excluding the default locale */
   localizations?: InputMaybe<AssetCreateLocalizationsInput>;
 };
@@ -303,6 +348,15 @@ export type AssetManyWhereInput = {
   createdBy?: InputMaybe<UserWhereInput>;
   updatedBy?: InputMaybe<UserWhereInput>;
   publishedBy?: InputMaybe<UserWhereInput>;
+  slideAsset_every?: InputMaybe<AssetWhereInput>;
+  slideAsset_some?: InputMaybe<AssetWhereInput>;
+  slideAsset_none?: InputMaybe<AssetWhereInput>;
+  slide_every?: InputMaybe<AssetWhereInput>;
+  slide_some?: InputMaybe<AssetWhereInput>;
+  slide_none?: InputMaybe<AssetWhereInput>;
+  slideSlide_every?: InputMaybe<SlideWhereInput>;
+  slideSlide_some?: InputMaybe<SlideWhereInput>;
+  slideSlide_none?: InputMaybe<SlideWhereInput>;
   scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
   scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
   scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
@@ -346,6 +400,9 @@ export type AssetUpdateInput = {
   width?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
   mimeType?: InputMaybe<Scalars['String']>;
+  slideAsset?: InputMaybe<AssetUpdateManyInlineInput>;
+  slide?: InputMaybe<AssetUpdateManyInlineInput>;
+  slideSlide?: InputMaybe<SlideUpdateManyInlineInput>;
   /** Manage document localizations */
   localizations?: InputMaybe<AssetUpdateLocalizationsInput>;
 };
@@ -647,6 +704,15 @@ export type AssetWhereInput = {
   createdBy?: InputMaybe<UserWhereInput>;
   updatedBy?: InputMaybe<UserWhereInput>;
   publishedBy?: InputMaybe<UserWhereInput>;
+  slideAsset_every?: InputMaybe<AssetWhereInput>;
+  slideAsset_some?: InputMaybe<AssetWhereInput>;
+  slideAsset_none?: InputMaybe<AssetWhereInput>;
+  slide_every?: InputMaybe<AssetWhereInput>;
+  slide_some?: InputMaybe<AssetWhereInput>;
+  slide_none?: InputMaybe<AssetWhereInput>;
+  slideSlide_every?: InputMaybe<SlideWhereInput>;
+  slideSlide_some?: InputMaybe<SlideWhereInput>;
+  slideSlide_none?: InputMaybe<SlideWhereInput>;
   scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
   scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
   scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
@@ -1332,6 +1398,50 @@ export type Mutation = {
   schedulePublishInfo?: Maybe<Info>;
   /** Unpublish one info from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
   scheduleUnpublishInfo?: Maybe<Info>;
+  /** Create one slide */
+  createSlide?: Maybe<Slide>;
+  /** Update one slide */
+  updateSlide?: Maybe<Slide>;
+  /** Delete one slide from _all_ existing stages. Returns deleted document. */
+  deleteSlide?: Maybe<Slide>;
+  /** Upsert one slide */
+  upsertSlide?: Maybe<Slide>;
+  /** Publish one slide */
+  publishSlide?: Maybe<Slide>;
+  /** Unpublish one slide from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
+  unpublishSlide?: Maybe<Slide>;
+  /** Update many Slide documents */
+  updateManySlidesConnection: SlideConnection;
+  /** Delete many Slide documents, return deleted documents */
+  deleteManySlidesConnection: SlideConnection;
+  /** Publish many Slide documents */
+  publishManySlidesConnection: SlideConnection;
+  /** Find many Slide documents that match criteria in specified stage and unpublish from target stages */
+  unpublishManySlidesConnection: SlideConnection;
+  /**
+   * Update many slides
+   * @deprecated Please use the new paginated many mutation (updateManySlidesConnection)
+   */
+  updateManySlides: BatchPayload;
+  /**
+   * Delete many Slide documents
+   * @deprecated Please use the new paginated many mutation (deleteManySlidesConnection)
+   */
+  deleteManySlides: BatchPayload;
+  /**
+   * Publish many Slide documents
+   * @deprecated Please use the new paginated many mutation (publishManySlidesConnection)
+   */
+  publishManySlides: BatchPayload;
+  /**
+   * Unpublish many Slide documents
+   * @deprecated Please use the new paginated many mutation (unpublishManySlidesConnection)
+   */
+  unpublishManySlides: BatchPayload;
+  /** Schedule to publish one slide */
+  schedulePublishSlide?: Maybe<Slide>;
+  /** Unpublish one slide from selected stages. Unpublish either the complete document with its relations, localizations and base data or specific localizations only. */
+  scheduleUnpublishSlide?: Maybe<Slide>;
   /** Create one test */
   createTest?: Maybe<Test>;
   /** Update one test */
@@ -1656,6 +1766,124 @@ export type MutationScheduleUnpublishInfoArgs = {
 };
 
 
+export type MutationCreateSlideArgs = {
+  data: SlideCreateInput;
+};
+
+
+export type MutationUpdateSlideArgs = {
+  where: SlideWhereUniqueInput;
+  data: SlideUpdateInput;
+};
+
+
+export type MutationDeleteSlideArgs = {
+  where: SlideWhereUniqueInput;
+};
+
+
+export type MutationUpsertSlideArgs = {
+  where: SlideWhereUniqueInput;
+  upsert: SlideUpsertInput;
+};
+
+
+export type MutationPublishSlideArgs = {
+  where: SlideWhereUniqueInput;
+  to?: Array<Stage>;
+};
+
+
+export type MutationUnpublishSlideArgs = {
+  where: SlideWhereUniqueInput;
+  from?: Array<Stage>;
+};
+
+
+export type MutationUpdateManySlidesConnectionArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+  data: SlideUpdateManyInput;
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  before?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationDeleteManySlidesConnectionArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  before?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationPublishManySlidesConnectionArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+  from?: InputMaybe<Stage>;
+  to?: Array<Stage>;
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  before?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationUnpublishManySlidesConnectionArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+  stage?: InputMaybe<Stage>;
+  from?: Array<Stage>;
+  skip?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  before?: InputMaybe<Scalars['ID']>;
+  after?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationUpdateManySlidesArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+  data: SlideUpdateManyInput;
+};
+
+
+export type MutationDeleteManySlidesArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+};
+
+
+export type MutationPublishManySlidesArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+  to?: Array<Stage>;
+};
+
+
+export type MutationUnpublishManySlidesArgs = {
+  where?: InputMaybe<SlideManyWhereInput>;
+  from?: Array<Stage>;
+};
+
+
+export type MutationSchedulePublishSlideArgs = {
+  where: SlideWhereUniqueInput;
+  to?: Array<Stage>;
+  releaseAt?: InputMaybe<Scalars['DateTime']>;
+  releaseId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationScheduleUnpublishSlideArgs = {
+  where: SlideWhereUniqueInput;
+  from?: Array<Stage>;
+  releaseAt?: InputMaybe<Scalars['DateTime']>;
+  releaseId?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationCreateTestArgs = {
   data: TestCreateInput;
 };
@@ -1841,6 +2069,14 @@ export type Query = {
   infosConnection: InfoConnection;
   /** Retrieve document version */
   infoVersion?: Maybe<DocumentVersion>;
+  /** Retrieve multiple slides */
+  slides: Array<Slide>;
+  /** Retrieve a single slide */
+  slide?: Maybe<Slide>;
+  /** Retrieve multiple slides using the Relay connection interface */
+  slidesConnection: SlideConnection;
+  /** Retrieve document version */
+  slideVersion?: Maybe<DocumentVersion>;
   /** Retrieve multiple tests */
   tests: Array<Test>;
   /** Retrieve a single test */
@@ -2034,6 +2270,44 @@ export type QueryInfoVersionArgs = {
 };
 
 
+export type QuerySlidesArgs = {
+  where?: InputMaybe<SlideWhereInput>;
+  orderBy?: InputMaybe<SlideOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  stage?: Stage;
+  locales?: Array<Locale>;
+};
+
+
+export type QuerySlideArgs = {
+  where: SlideWhereUniqueInput;
+  stage?: Stage;
+  locales?: Array<Locale>;
+};
+
+
+export type QuerySlidesConnectionArgs = {
+  where?: InputMaybe<SlideWhereInput>;
+  orderBy?: InputMaybe<SlideOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  stage?: Stage;
+  locales?: Array<Locale>;
+};
+
+
+export type QuerySlideVersionArgs = {
+  where: VersionWhereInput;
+};
+
+
 export type QueryTestsArgs = {
   where?: InputMaybe<TestWhereInput>;
   orderBy?: InputMaybe<TestOrderByInput>;
@@ -2178,7 +2452,7 @@ export type ScheduledOperationAffectedDocumentsArgs = {
   locales?: InputMaybe<Array<Locale>>;
 };
 
-export type ScheduledOperationAffectedDocument = Asset | Info | Test;
+export type ScheduledOperationAffectedDocument = Asset | Info | Slide | Test;
 
 export type ScheduledOperationConnectInput = {
   /** Document to connect */
@@ -3089,6 +3363,385 @@ export type ScheduledReleaseWhereUniqueInput = {
   id?: InputMaybe<Scalars['ID']>;
 };
 
+export type Slide = Node & {
+  __typename?: 'Slide';
+  /** System stage field */
+  stage: Stage;
+  /** Get the document in other stages */
+  documentInStages: Array<Slide>;
+  /** The unique identifier */
+  id: Scalars['ID'];
+  /** The time the document was created */
+  createdAt: Scalars['DateTime'];
+  /** The time the document was updated */
+  updatedAt: Scalars['DateTime'];
+  /** The time the document was published. Null on documents in draft stage. */
+  publishedAt?: Maybe<Scalars['DateTime']>;
+  /** User that created this document */
+  createdBy?: Maybe<User>;
+  /** User that last updated this document */
+  updatedBy?: Maybe<User>;
+  /** User that last published this document */
+  publishedBy?: Maybe<User>;
+  slide: Array<Asset>;
+  scheduledIn: Array<ScheduledOperation>;
+  /** List of Slide versions */
+  history: Array<Version>;
+};
+
+
+export type SlideDocumentInStagesArgs = {
+  stages?: Array<Stage>;
+  includeCurrent?: Scalars['Boolean'];
+  inheritLocale?: Scalars['Boolean'];
+};
+
+
+export type SlideCreatedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type SlideUpdatedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type SlidePublishedByArgs = {
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type SlideSlideArgs = {
+  where?: InputMaybe<AssetWhereInput>;
+  orderBy?: InputMaybe<AssetOrderByInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type SlideScheduledInArgs = {
+  where?: InputMaybe<ScheduledOperationWhereInput>;
+  skip?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  locales?: InputMaybe<Array<Locale>>;
+};
+
+
+export type SlideHistoryArgs = {
+  limit?: Scalars['Int'];
+  skip?: Scalars['Int'];
+  stageOverride?: InputMaybe<Stage>;
+};
+
+export type SlideConnectInput = {
+  /** Document to connect */
+  where: SlideWhereUniqueInput;
+  /** Allow to specify document position in list of connected documents, will default to appending at end of list */
+  position?: InputMaybe<ConnectPositionInput>;
+};
+
+/** A connection to a list of items. */
+export type SlideConnection = {
+  __typename?: 'SlideConnection';
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
+  /** A list of edges. */
+  edges: Array<SlideEdge>;
+  aggregate: Aggregate;
+};
+
+export type SlideCreateInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  slide?: InputMaybe<AssetCreateManyInlineInput>;
+};
+
+export type SlideCreateManyInlineInput = {
+  /** Create and connect multiple existing Slide documents */
+  create?: InputMaybe<Array<SlideCreateInput>>;
+  /** Connect multiple existing Slide documents */
+  connect?: InputMaybe<Array<SlideWhereUniqueInput>>;
+};
+
+export type SlideCreateOneInlineInput = {
+  /** Create and connect one Slide document */
+  create?: InputMaybe<SlideCreateInput>;
+  /** Connect one existing Slide document */
+  connect?: InputMaybe<SlideWhereUniqueInput>;
+};
+
+/** An edge in a connection. */
+export type SlideEdge = {
+  __typename?: 'SlideEdge';
+  /** The item at the end of the edge. */
+  node: Slide;
+  /** A cursor for use in pagination. */
+  cursor: Scalars['String'];
+};
+
+/** Identifies documents */
+export type SlideManyWhereInput = {
+  /** Contains search across all appropriate fields. */
+  _search?: InputMaybe<Scalars['String']>;
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<SlideWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<SlideWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<SlideWhereInput>>;
+  id?: InputMaybe<Scalars['ID']>;
+  /** All values that are not equal to given value. */
+  id_not?: InputMaybe<Scalars['ID']>;
+  /** All values that are contained in given list. */
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  /** All values containing the given string. */
+  id_contains?: InputMaybe<Scalars['ID']>;
+  /** All values not containing the given string. */
+  id_not_contains?: InputMaybe<Scalars['ID']>;
+  /** All values starting with the given string. */
+  id_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values ending with the given string. */
+  id_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values not ending with the given string */
+  id_not_ends_with?: InputMaybe<Scalars['ID']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  createdAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values less than the given value. */
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  publishedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  publishedAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values that are not contained in given list. */
+  publishedAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values less than the given value. */
+  publishedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  publishedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  publishedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  publishedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  createdBy?: InputMaybe<UserWhereInput>;
+  updatedBy?: InputMaybe<UserWhereInput>;
+  publishedBy?: InputMaybe<UserWhereInput>;
+  slide_every?: InputMaybe<AssetWhereInput>;
+  slide_some?: InputMaybe<AssetWhereInput>;
+  slide_none?: InputMaybe<AssetWhereInput>;
+  scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
+};
+
+export enum SlideOrderByInput {
+  IdAsc = 'id_ASC',
+  IdDesc = 'id_DESC',
+  CreatedAtAsc = 'createdAt_ASC',
+  CreatedAtDesc = 'createdAt_DESC',
+  UpdatedAtAsc = 'updatedAt_ASC',
+  UpdatedAtDesc = 'updatedAt_DESC',
+  PublishedAtAsc = 'publishedAt_ASC',
+  PublishedAtDesc = 'publishedAt_DESC'
+}
+
+export type SlideUpdateInput = {
+  slide?: InputMaybe<AssetUpdateManyInlineInput>;
+};
+
+export type SlideUpdateManyInlineInput = {
+  /** Create and connect multiple Slide documents */
+  create?: InputMaybe<Array<SlideCreateInput>>;
+  /** Connect multiple existing Slide documents */
+  connect?: InputMaybe<Array<SlideConnectInput>>;
+  /** Override currently-connected documents with multiple existing Slide documents */
+  set?: InputMaybe<Array<SlideWhereUniqueInput>>;
+  /** Update multiple Slide documents */
+  update?: InputMaybe<Array<SlideUpdateWithNestedWhereUniqueInput>>;
+  /** Upsert multiple Slide documents */
+  upsert?: InputMaybe<Array<SlideUpsertWithNestedWhereUniqueInput>>;
+  /** Disconnect multiple Slide documents */
+  disconnect?: InputMaybe<Array<SlideWhereUniqueInput>>;
+  /** Delete multiple Slide documents */
+  delete?: InputMaybe<Array<SlideWhereUniqueInput>>;
+};
+
+export type SlideUpdateManyInput = {
+  /** No fields in updateMany data input */
+  _?: InputMaybe<Scalars['String']>;
+};
+
+export type SlideUpdateManyWithNestedWhereInput = {
+  /** Document search */
+  where: SlideWhereInput;
+  /** Update many input */
+  data: SlideUpdateManyInput;
+};
+
+export type SlideUpdateOneInlineInput = {
+  /** Create and connect one Slide document */
+  create?: InputMaybe<SlideCreateInput>;
+  /** Update single Slide document */
+  update?: InputMaybe<SlideUpdateWithNestedWhereUniqueInput>;
+  /** Upsert single Slide document */
+  upsert?: InputMaybe<SlideUpsertWithNestedWhereUniqueInput>;
+  /** Connect existing Slide document */
+  connect?: InputMaybe<SlideWhereUniqueInput>;
+  /** Disconnect currently connected Slide document */
+  disconnect?: InputMaybe<Scalars['Boolean']>;
+  /** Delete currently connected Slide document */
+  delete?: InputMaybe<Scalars['Boolean']>;
+};
+
+export type SlideUpdateWithNestedWhereUniqueInput = {
+  /** Unique document search */
+  where: SlideWhereUniqueInput;
+  /** Document to update */
+  data: SlideUpdateInput;
+};
+
+export type SlideUpsertInput = {
+  /** Create document if it didn't exist */
+  create: SlideCreateInput;
+  /** Update document if it exists */
+  update: SlideUpdateInput;
+};
+
+export type SlideUpsertWithNestedWhereUniqueInput = {
+  /** Unique document search */
+  where: SlideWhereUniqueInput;
+  /** Upsert data */
+  data: SlideUpsertInput;
+};
+
+/** Identifies documents */
+export type SlideWhereInput = {
+  /** Contains search across all appropriate fields. */
+  _search?: InputMaybe<Scalars['String']>;
+  /** Logical AND on all given filters. */
+  AND?: InputMaybe<Array<SlideWhereInput>>;
+  /** Logical OR on all given filters. */
+  OR?: InputMaybe<Array<SlideWhereInput>>;
+  /** Logical NOT on all given filters combined by AND. */
+  NOT?: InputMaybe<Array<SlideWhereInput>>;
+  id?: InputMaybe<Scalars['ID']>;
+  /** All values that are not equal to given value. */
+  id_not?: InputMaybe<Scalars['ID']>;
+  /** All values that are contained in given list. */
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  /** All values that are not contained in given list. */
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  /** All values containing the given string. */
+  id_contains?: InputMaybe<Scalars['ID']>;
+  /** All values not containing the given string. */
+  id_not_contains?: InputMaybe<Scalars['ID']>;
+  /** All values starting with the given string. */
+  id_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values not starting with the given string. */
+  id_not_starts_with?: InputMaybe<Scalars['ID']>;
+  /** All values ending with the given string. */
+  id_ends_with?: InputMaybe<Scalars['ID']>;
+  /** All values not ending with the given string */
+  id_not_ends_with?: InputMaybe<Scalars['ID']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  createdAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  createdAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values that are not contained in given list. */
+  createdAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values less than the given value. */
+  createdAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  createdAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  createdAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  createdAt_gte?: InputMaybe<Scalars['DateTime']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  updatedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  updatedAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values that are not contained in given list. */
+  updatedAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values less than the given value. */
+  updatedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  updatedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  updatedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  updatedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  publishedAt?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are not equal to given value. */
+  publishedAt_not?: InputMaybe<Scalars['DateTime']>;
+  /** All values that are contained in given list. */
+  publishedAt_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values that are not contained in given list. */
+  publishedAt_not_in?: InputMaybe<Array<Scalars['DateTime']>>;
+  /** All values less than the given value. */
+  publishedAt_lt?: InputMaybe<Scalars['DateTime']>;
+  /** All values less than or equal the given value. */
+  publishedAt_lte?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than the given value. */
+  publishedAt_gt?: InputMaybe<Scalars['DateTime']>;
+  /** All values greater than or equal the given value. */
+  publishedAt_gte?: InputMaybe<Scalars['DateTime']>;
+  createdBy?: InputMaybe<UserWhereInput>;
+  updatedBy?: InputMaybe<UserWhereInput>;
+  publishedBy?: InputMaybe<UserWhereInput>;
+  slide_every?: InputMaybe<AssetWhereInput>;
+  slide_some?: InputMaybe<AssetWhereInput>;
+  slide_none?: InputMaybe<AssetWhereInput>;
+  scheduledIn_every?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_some?: InputMaybe<ScheduledOperationWhereInput>;
+  scheduledIn_none?: InputMaybe<ScheduledOperationWhereInput>;
+};
+
+/** References Slide record uniquely */
+export type SlideWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
 /** Stage system enumeration */
 export enum Stage {
   /** The Draft is the default stage for all your content. */
@@ -3980,3 +4633,8 @@ export type TestsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type TestsQuery = { __typename?: 'Query', tests: Array<{ __typename?: 'Test', id: string, number?: number | null, stage: Stage }> };
+
+export type SlidesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SlidesQuery = { __typename?: 'Query', slides: Array<{ __typename?: 'Slide', slide: Array<{ __typename?: 'Asset', id: string, url: string }> }> };
