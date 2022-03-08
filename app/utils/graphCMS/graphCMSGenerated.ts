@@ -1,3 +1,6 @@
+import { GraphQLClient } from 'graphql-request';
+import * as Dom from 'graphql-request/dist/types.dom';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -4638,3 +4641,78 @@ export type SlidesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SlidesQuery = { __typename?: 'Query', slides: Array<{ __typename?: 'Slide', slide: Array<{ __typename?: 'Asset', id: string, url: string }> }> };
+
+
+export const GetInfosDocument = gql`
+    query GetInfos {
+  infos {
+    title
+    value
+  }
+}
+    `;
+export const GetLogoDocument = gql`
+    query GetLogo {
+  asset(where: {id: "ckztukhg825wa0b81prkv1aow"}) {
+    id
+    url
+  }
+}
+    `;
+export const UpdateTestDocument = gql`
+    mutation UpdateTest($number: Int, $id: ID) {
+  updateTest(data: {number: $number}, where: {id: $id}) {
+    id
+    number
+  }
+  publishTest(where: {id: $id}, to: PUBLISHED) {
+    id
+    stage
+  }
+}
+    `;
+export const TestsDocument = gql`
+    query Tests {
+  tests(first: 10) {
+    id
+    number
+    stage
+  }
+}
+    `;
+export const SlidesDocument = gql`
+    query Slides {
+  slides {
+    slide {
+      id
+      url
+    }
+  }
+}
+    `;
+
+export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
+
+
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName) => action();
+
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    GetInfos(variables?: GetInfosQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetInfosQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetInfosQuery>(GetInfosDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetInfos');
+    },
+    GetLogo(variables?: GetLogoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetLogoQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetLogoQuery>(GetLogoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetLogo');
+    },
+    UpdateTest(variables?: UpdateTestMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateTestMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateTestMutation>(UpdateTestDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UpdateTest');
+    },
+    Tests(variables?: TestsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<TestsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<TestsQuery>(TestsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Tests');
+    },
+    Slides(variables?: SlidesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<SlidesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SlidesQuery>(SlidesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Slides');
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;
